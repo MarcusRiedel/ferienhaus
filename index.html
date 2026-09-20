@@ -1,0 +1,4078 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferienhaus – Familienverwaltung</title>
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: blob:; connect-src https://afjvwxdaqulpfbkncclb.supabase.co; base-uri 'none'; form-action 'none'">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f8fa;
+    --warm: #eef0f4;
+    --brown: #1a2320;
+    --brown-light: #2d4a2d;
+    --green: #1D9E75;
+    --green-light: #25b585;
+    --green-pale: #E1F5EE;
+    --red: #D85A30;
+    --red-pale: #FAECE7;
+    --gold: #BA7517;
+    --gold-pale: #FAEEDA;
+    --text: #1a2320;
+    --text-muted: #6b7c75;
+    --border: #e2e8e4;
+    --white: #ffffff;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* HEADER */
+  header {
+    background: #0d3547;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-inner {
+    padding: 16px 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-text { position: relative; z-index: 2; padding-bottom: 44px; }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f0ede5;
+    letter-spacing: 0.01em;
+  }
+  .header-title span { font-style: italic; font-weight: 400; }
+  .header-meta {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.38);
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .header-svg {
+    display: block;
+    width: 100%;
+    margin-top: -8px;
+  }
+
+  /* NAV */
+  nav {
+    background: #0d3547;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.35);
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.18s;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nav-btn:hover { color: rgba(255,255,255,0.7); }
+  .nav-btn.active {
+    color: #f0ede5;
+    border-bottom-color: rgba(255,255,255,0.6);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+  }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon { font-size: 1.2rem; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media(max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    main { padding: 16px 14px 48px; }
+    .card { padding: 16px 16px; }
+  }
+
+  /* STATS */
+  .stat-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1.1;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  /* FORMS */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media(max-width: 600px) { .form-row, .form-row.cols-3 { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  input, select, textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--white);
+    color: var(--text);
+    transition: border-color 0.18s, box-shadow 0.18s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* BUTTONS */
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    line-height: 1;
+  }
+  .btn-primary { background: #1D9E75; color: white; border: none; }
+  .btn-primary:hover { background: #25b585; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #c04e25; }
+  .btn-outline {
+    background: var(--white);
+    color: var(--text);
+    border: 1.5px solid #aabfb8;
+  }
+  .btn-outline:hover { border-color: var(--text-muted); background: #eef0f4; }
+  .btn-gold { background: var(--gold); color: white; }
+  .btn-sm { padding: 8px 14px; font-size: 0.85rem; border-radius: 8px; }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-pale); color: #0F6E56; }
+  .badge-red { background: var(--red-pale); color: #993C1D; }
+  .badge-gold { background: var(--gold-pale); color: #854F0B; }
+  .badge-grey { background: #eef0f4; color: var(--text-muted); }
+
+  /* CALENDAR */
+  .cal-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cal-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 3px;
+    min-width: 480px;
+    table-layout: fixed;
+  }
+  .cal-header {
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 8px 2px;
+    width: calc((100% - 40px) / 7);
+  }
+  .cal-kw-header {
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--border);
+    padding: 8px 2px;
+    width: 40px;
+  }
+  .cal-kw-cell {
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #c0ccc8;
+    padding: 4px 2px;
+    vertical-align: top;
+    white-space: nowrap;
+    width: 40px;
+  }
+  .cal-day {
+    vertical-align: top;
+    text-align: center;
+    padding: 6px 3px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 64px;
+    position: relative;
+  }
+  .cal-day:hover:not(.empty-day) { border-color: var(--green); background: var(--green-pale); }
+  .empty-day { cursor: default; background: transparent !important; border: 1px solid transparent !important; }
+  .cal-day.today { background: var(--gold-pale); border-color: var(--gold) !important; }
+  .cal-day.today .cal-day-num { color: var(--gold); font-weight: 800; }
+  .cal-day.booked { background: var(--green-pale); border-color: #9FE1CB; }
+  .cal-day-num {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 2px;
+  }
+  .cal-booking-chip {
+    display: block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    border-radius: 3px;
+    padding: 1px 3px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    margin: 1px auto 0;
+  }
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .cal-month-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .cal-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .cal-legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* BOOKINGS LIST */
+  .booking-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    margin-bottom: 10px;
+    transition: box-shadow 0.18s;
+  }
+  .booking-item:hover { box-shadow: var(--shadow); }
+  .booking-color { width: 5px; border-radius: 3px; align-self: stretch; flex-shrink: 0; }
+  .booking-info { flex: 1; }
+  .booking-name { font-weight: 600; font-size: 1rem; color: var(--text); margin-bottom: 4px; }
+  .booking-dates { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+  .booking-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .booking-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+  /* TASKS */
+  .task-section { margin-bottom: 24px; }
+  .task-section-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    margin-bottom: 8px;
+    transition: all 0.18s;
+  }
+  .task-item.done {
+    background: var(--green-pale);
+    border-color: #9FE1CB;
+    opacity: 0.8;
+  }
+  .task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+  .task-checkbox {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 2.5px solid #aabfb8;
+    background: var(--white);
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .task-item.done .task-checkbox { background: var(--green); border-color: var(--green); color: white; box-shadow: none; }
+  .task-text { flex: 1; font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+  .task-freq {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: #eef0f4;
+    padding: 3px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  /* PROTOCOL */
+  .protocol-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .protocol-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .protocol-header:hover { background: var(--cream); }
+  .protocol-info { flex: 1; }
+  .protocol-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+  .protocol-date { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+  .protocol-body { border-top: 1px solid var(--border); padding: 16px 20px; display: none; }
+  .protocol-body.open { display: block; }
+  .protocol-task-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--warm);
+    font-size: 0.9rem;
+  }
+  .protocol-task-row:last-child { border-bottom: none; }
+  .status-icon { font-size: 1rem; flex-shrink: 0; }
+
+  /* COSTS */
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  .cost-row:last-child { border-bottom: none; }
+  .cost-name { color: var(--text); }
+  .cost-amount { font-weight: 600; }
+  .cost-amount.positive { color: var(--green); }
+  .cost-amount.negative { color: var(--red); }
+  .cost-amount.neutral { color: var(--text); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 28px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: fadeUp 0.22s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ALERT */
+  .alert {
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .alert-warn { background: var(--gold-pale); border: 1px solid #FAC775; color: #633806; }
+  .alert-info { background: var(--green-pale); border: 1px solid #9FE1CB; color: #085041; }
+  .alert-danger { background: var(--red-pale); border: 1px solid #F5C4B3; color: #712B13; }
+
+  /* CHECKLIST DEPARTURE */
+  .departure-box {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    background: var(--cream);
+  }
+  .departure-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+  .empty .empty-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+
+  /* INFO TEXT */
+  .info-text {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .section-headline {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .section-sub {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* PERSON COLORS */
+  .color-1 { background: #1D9E75; }
+  .color-2 { background: #534AB7; }
+  .color-3 { background: #185FA5; }
+  .color-4 { background: #854F0B; }
+  .color-5 { background: #993556; }
+  .color-6 { background: #0F6E56; }
+  .color-7 { background: #639922; }
+  .color-8 { background: #A32D2D; }
+
+  .scrollable { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th {
+    background: var(--cream);
+    color: var(--text-muted);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 0.92rem;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--cream); }
+
+  /* AMPEL JE BUCHUNG: gelb ab 2 Tage vor Abreise, rot nach Ende */
+  .booking-item.st-bad, .protocol-item.st-bad { background: var(--red-pale); border-color: var(--red); border-left: 6px solid var(--red); }
+  .booking-item.st-warn, .protocol-item.st-warn { background: #FFF6DD; border-color: #E0A020; border-left: 6px solid #E0A020; }
+  .booking-item.st-ok, .protocol-item.st-ok { border-left: 6px solid var(--green); }
+  .bk-panel { flex-basis: 100%; width: 100%; margin-top: 4px; border-top: 1px dashed var(--border); padding-top: 8px; }
+  .bk-panel > summary { cursor: pointer; font-weight: 600; font-size: 0.86rem; color: var(--green); padding: 4px 0; }
+  .bk-panel-body { padding-top: 10px; }
+  #global-alerts:empty { display: none; }
+  #global-alerts { margin-bottom: 16px; }
+  #global-alerts .alert { margin-bottom: 8px; }
+
+  /* ADMIN: nur nach Anmeldung sichtbar */
+  body:not(.is-admin) .admin-only { display: none !important; }
+  body:not(.is-admin) .adm-click { pointer-events: none; cursor: default; }
+
+  /* MENÜ „MEHR“ */
+  .more-menu { position: fixed; z-index: 600; background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 6px; min-width: 216px; display: flex; flex-direction: column; }
+  .more-menu[hidden] { display: none; }
+  .more-menu button { background: none; border: none; text-align: left; padding: 11px 12px; border-radius: 8px; font-family: inherit; font-size: 0.92rem; cursor: pointer; color: var(--text); }
+  .more-menu button:hover { background: var(--cream); }
+  .more-menu hr { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+  /* BUCHUNGSLISTE (kompakt) */
+  .bk-row { padding: 12px 14px; gap: 12px; margin-bottom: 8px; align-items: stretch; }
+  .bk-main { flex: 1; min-width: 0; }
+  .bk-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+  .bk-name { font-weight: 700; font-size: 0.98rem; color: var(--text); }
+  .bk-dates { font-weight: 600; font-size: 0.88rem; color: var(--text); }
+  .bk-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+  .bk-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+  .bk-side { display: flex; gap: 6px; align-items: flex-start; flex-shrink: 0; }
+  .bk-cost { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1.5px solid; cursor: pointer; user-select: none; }
+  .bk-cost.paid { background: var(--green-pale); color: var(--green); border-color: var(--green-light); }
+  .bk-cost.open { background: var(--red-pale); color: var(--red); border-color: var(--red); }
+  .bk-cost.free { background: var(--warm); color: var(--text-muted); border-color: var(--border); cursor: default; }
+  .bk-group-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin: 2px 0 8px; }
+  .bk-none { font-size: 0.85rem; color: var(--text-muted); padding: 6px 0 12px; }
+  .bk-past { margin-top: 14px; }
+  .bk-past > summary { cursor: pointer; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); padding: 6px 0 10px; }
+
+  /* BUCHUNGSANFRAGEN: grau */
+  .bk-req { background: #F1F3F5; border: 1.5px dashed #9AA3AD; }
+  .cal-req-chip { background: #9AA3AD !important; outline: 1.5px dashed #6B7580; outline-offset: -2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-text">
+      <div class="header-meta">Ostseebad Dierhagen</div>
+      <div class="header-title">Ferienhaus <span>Familie</span></div>
+    </div>
+    <svg class="header-svg" viewBox="0 0 1100 70" preserveAspectRatio="xMidYMax slice">
+      <line x1="0" y1="38" x2="1100" y2="38" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+      <!-- Wasser -->
+      <path d="M0 44 Q80 40 160 44 Q240 48 320 44 Q400 40 480 44 Q560 48 640 44 Q720 40 800 44 Q880 48 960 44 Q1030 41 1100 44 L1100 70 L0 70Z" fill="rgba(255,255,255,0.06)"/>
+      <path d="M0 54 Q120 50 240 54 Q360 58 480 54 Q600 50 720 54 Q840 58 960 54 Q1030 51 1100 54 L1100 70 L0 70Z" fill="rgba(255,255,255,0.04)"/>
+      <!-- Hauptboot rechts -->
+      <path d="M920 46 Q925 52 975 52 Q980 46 975 46Z" fill="rgba(255,255,255,0.55)"/>
+      <line x1="936" y1="46" x2="936" y2="10" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M936 12 L936 44 L968 44 Z" fill="rgba(255,255,255,0.22)"/>
+      <path d="M936 20 L936 44 L912 44 Z" fill="rgba(255,255,255,0.14)"/>
+      <line x1="936" y1="44" x2="970" y2="44" stroke="rgba(255,255,255,0.38)" stroke-width="1" stroke-linecap="round"/>
+      <!-- Kleines Boot -->
+      <path d="M200 48 Q203 53 228 53 Q231 48 228 48Z" fill="rgba(255,255,255,0.2)"/>
+      <line x1="210" y1="48" x2="210" y2="28" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+      <path d="M210 29 L210 46 L228 46 Z" fill="rgba(255,255,255,0.08)"/>
+      <!-- Reflexion -->
+      <path d="M0 60 Q150 56 300 60 Q450 64 600 60 Q750 56 900 60 Q1000 62 1100 60 L1100 70 L0 70Z" fill="rgba(255,255,255,0.03)"/>
+    </svg>
+  </div>
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="showSection('dashboard')">Übersicht</button>
+      <button class="nav-btn" onclick="showSection('calendar')">Kalender</button>
+      <button class="nav-btn" onclick="showSection('tasks')">Aufgaben</button>
+      <button class="nav-btn" onclick="showSection('nachfolger')">📝 Nachfolger</button>
+      <button class="nav-btn" onclick="showSection('departure')">Checkliste</button>
+      <button class="nav-btn" id="nav-more" onclick="toggleMoreMenu(event)">Mehr ▾</button>
+    </div>
+  </nav>
+  <div class="more-menu" id="more-menu" hidden>
+    <button type="button" onclick="closeMoreMenu();showSection('settings')">👨‍👩‍👧 Haushalte</button>
+    <button type="button" onclick="closeMoreMenu();showSection('costs')">💶 Finanzen</button>
+    <button type="button" onclick="closeMoreMenu();showSection('protocol')">📋 Protokoll</button>
+    <hr>
+    <button type="button" id="admin-toggle-btn" onclick="adminMenuClick()">🔑 Admin-Anmeldung</button>
+  </div>
+</header>
+
+<main>
+
+<div id="global-alerts"></div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="section active" id="section-dashboard">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Guten Tag</div>
+      <div class="section-sub" id="today-date">–</div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px">
+    <div class="stat-box">
+      <div class="stat-number" id="stat-buchungen">0</div>
+      <div class="stat-label">Buchungen dieses Jahr</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="stat-tage">0</div>
+      <div class="stat-label">Belegte Tage</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="stat-topf">0 €</div>
+      <div class="stat-label">Gemeinschaftstopf</div>
+    </div>
+  </div>
+
+  <div id="dashboard-nachfolger" style="margin-bottom:4px"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span> Nächste Aufenthalte</div>
+      <div id="dashboard-upcoming"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">⚠️</span> Offene Aufschläge</div>
+      <div id="dashboard-penalties"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🌿</span> Rasen-Status</div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Zuletzt gemäht</div>
+        <div id="rasen-last" style="font-size:1.1rem;font-weight:600;color:var(--green)">–</div>
+      </div>
+      <div>
+        <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Tage her</div>
+        <div id="rasen-days" style="font-size:1.1rem;font-weight:600">–</div>
+      </div>
+      <div style="flex:1">
+        <div id="rasen-status-bar" style="height:10px;border-radius:5px;background:#eef0f4;overflow:hidden">
+          <div id="rasen-bar" style="height:100%;width:0%;background:var(--green);border-radius:5px;transition:width 0.5s"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);margin-top:4px">
+          <span>Frisch</span><span>Fällig (14 Tage)</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary btn-sm" onclick="setRasenDate()">✅ Jetzt gemäht</button>
+        <button class="btn btn-outline btn-sm admin-only" onclick="orderMower()">📞 Mäher bestellen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🗑</span> Abfallkalender – Anstehende Termine</div>
+    <div id="dashboard-abfall"></div>
+  </div>
+
+</div>
+
+<!-- ===== CALENDAR ===== -->
+<div class="section" id="section-calendar">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Kalender</div>
+      <div class="section-sub">Buchungen & Belegungsplan</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline" onclick="openRequestModal()">📩 Buchungsanfrage</button>
+      <button class="btn btn-primary admin-only" onclick="openBookingModal()">+ Neue Buchung</button>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden">
+    <div class="cal-nav">
+      <button class="btn btn-outline btn-sm" onclick="calPrev()">‹ Vormonat</button>
+      <div class="cal-month-title" id="cal-title">–</div>
+      <button class="btn btn-outline btn-sm" onclick="calNext()">Nächster ›</button>
+    </div>
+    <div class="cal-wrap">
+      <table class="cal-table">
+        <thead id="cal-thead"></thead>
+        <tbody id="cal-tbody"></tbody>
+      </table>
+    </div>
+    <div class="cal-legend" id="cal-legend"></div>
+    <div style="margin-top:10px;font-size:0.78rem;color:var(--gold);font-weight:600">🔄 Wechseltag ist immer Sonntag 17:00 Uhr</div>
+    <div style="margin-top:8px;font-size:0.78rem;color:var(--text-muted);display:flex;gap:12px;flex-wrap:wrap">
+      <span>Müllabfuhr: <span style="font-size:0.7rem">⬛ Restabfall &nbsp; 🟤 Bio &nbsp; 🔵 Papier &nbsp; 🟡 Gelber Sack</span></span>
+    </div>
+  </div>
+
+  <div class="card" id="requests-card" style="display:none">
+    <div class="card-title"><span class="icon">📩</span> Buchungsanfragen <span class="badge badge-grey" id="requests-count">0</span></div>
+    <div class="info-text" style="margin:0 0 12px">Noch nicht bestätigt. Mehrere Haushalte können denselben Zeitraum anfragen. Der Admin legt eine davon als Buchung fest, die übrigen Anfragen dieses Zeitraums werden dann gelöscht.</div>
+    <div id="requests-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Alle Buchungen</div>
+    <div id="bookings-list"></div>
+  </div>
+</div>
+
+<!-- ===== TASKS ===== -->
+<div class="section" id="section-tasks">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Aufgabenliste</div>
+      <div class="section-sub">Haus & Garten – regelmäßige Pflege</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">🌿</span> Garten</div>
+      <div id="tasks-garden"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🏠</span> Haus</div>
+      <div id="tasks-house"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> Saisonale Aufgaben</div>
+    <div id="tasks-seasonal"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span><span class="icon">✏️</span> Eigene Aufgaben <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400">(dieses Jahr)</span></span>
+      <button class="btn btn-primary btn-sm" onclick="openCustomTaskModal()">+ Aufgabe</button>
+    </div>
+    <div id="tasks-custom"></div>
+  </div>
+</div>
+
+<!-- ===== NACHFOLGER ===== -->
+<div class="section" id="section-nachfolger">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Bitte an den Nachfolger</div>
+      <div class="section-sub">Hinweise für den nächsten Haushalt</div>
+    </div>
+    <button class="btn btn-primary" onclick="openNachfolgerModal()">+ Notiz hinzufügen</button>
+  </div>
+
+  <div class="alert alert-info">
+    <span>💡</span>
+    <div>Hier kannst du Hinweise für den nächsten Haushalt hinterlassen – z.B. fehlende Batterien, kaputte Dinge oder Besorgungen die noch fehlen.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> Offene Hinweise</div>
+    <div id="nachfolger-open"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">✅</span> Erledigte Hinweise</div>
+    <div id="nachfolger-done"></div>
+  </div>
+</div>
+
+<!-- ===== ABFAHRT ===== -->
+<div class="section" id="section-departure">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Checkliste</div>
+      <div class="section-sub">Pflichtaufgaben je Buchung</div>
+    </div>
+  </div>
+
+  <div class="alert alert-warn">
+    <span>⚠️</span>
+    <div><strong>Pflicht bei jeder Buchung:</strong> Rasen mähen (mit Foto) und ein Foto der Kurtaxe-Anmeldung hochladen. Fehlt etwas, wird die Buchung ab 2 Tage vor der Abreise <strong>gelb</strong> und nach dem Ende <strong>rot</strong>. Wurde nicht gemäht, wird der Rasenmäher am Tag nach der Abreise automatisch beauftragt (45 € Aufschlag).</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> Für welche Buchung?</div>
+    <div class="form-group" style="margin-bottom:0">
+      <label>Buchung</label>
+      <select id="dep-booking"></select>
+    </div>
+  </div>
+
+  <div class="departure-box" id="dep-checklist"></div>
+</div>
+
+<!-- ===== PROTOKOLL ===== -->
+<div class="section" id="section-protocol">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Protokoll</div>
+      <div class="section-sub">Hängt automatisch an jeder Buchung – mit Checkliste und Aufschlägen</div>
+    </div>
+  </div>
+  <div id="protocol-list"></div>
+</div>
+
+<!-- ===== KOSTEN ===== -->
+<div class="section" id="section-costs">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Finanzen</div>
+      <div class="section-sub">Nutzungsentgelte, Aufschläge & Gemeinschaftstopf</div>
+    </div>
+    <button class="btn btn-outline admin-only" onclick="openExpenseModal()">+ Ausgabe buchen</button>
+  </div>
+
+  <div class="card" style="border:2px solid var(--green);background:var(--green-pale)">
+    <div class="card-title" style="color:#085041"><span class="icon">🏦</span> Bankverbindung für Überweisungen</div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:0.95rem">
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#0F6E56;margin-bottom:2px">Empfänger*in</div>
+        <div style="font-weight:600;color:var(--text)">Henryk Fehst und Britta Riedel</div>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#0F6E56;margin-bottom:2px">IBAN</div>
+        <div style="font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:0.08em;font-family:monospace">DE39 8609 5604 0007 3812 80</div>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#0F6E56;margin-bottom:4px">Verwendungszweck</div>
+        <div id="transfer-purpose-template" style="background:white;border:1px solid #9FE1CB;border-radius:8px;padding:10px 14px;font-family:monospace;font-size:0.88rem;color:var(--text);letter-spacing:0.02em">
+          20XX-XX-XX bis XX Ostseeabrechnung Nachname Vorname
+        </div>
+        <div style="font-size:0.78rem;color:#0F6E56;margin-top:6px">
+          💡 Bitte Buchungszeitraum und eigenen Namen eintragen – z.B. <em>2026-07-05 bis 19 Ostseeabrechnung Müller Thomas</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px">
+    <div class="stat-box">
+      <div class="stat-number" id="cost-einnahmen" style="color:var(--green)">0 €</div>
+      <div class="stat-label">Eingegangen</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="cost-offen" style="color:var(--red)">0 €</div>
+      <div class="stat-label">Offene Forderungen</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="cost-ausgaben">0 €</div>
+      <div class="stat-label">Ausgaben</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✅</span> Einnahmen – bezahlt</div>
+    <div id="costs-paid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔴</span> Schuldner – noch offen</div>
+    <div id="costs-unpaid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧾</span> Ausgaben</div>
+    <div id="costs-log"></div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="section" id="section-settings">
+  <div class="section-header">
+    <div>
+      <div class="section-headline">Haushalte</div>
+      <div class="section-sub">Verwaltung der 8 Familienhaushalte</div>
+    </div>
+    <button class="btn btn-primary admin-only" onclick="openHouseholdModal()">+ Haushalt hinzufügen</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> Abrechnungsregel</div>
+    <div style="font-size:0.88rem;line-height:1.6;color:var(--text)">
+      <strong>10 € pro Person pro Tag.</strong> Bei jeder Buchung sind Rasenmähen (mit Foto) und das Foto der Kurtaxe-Anmeldung Pflicht.<br>
+      Rasen nicht gemäht: <strong>+45 € (externer Mäher, wird am Tag nach der Abreise beauftragt)</strong><br>
+      Wird die Abfahrt in der Checkliste gemeldet und Punkte bleiben offen: Haus nicht sauber <strong>+20 €</strong> · Müll nicht entsorgt <strong>+10 €</strong> · Kühlschrank nicht leer <strong>+10 €</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">👨‍👩‍👧</span> Registrierte Haushalte</div>
+    <div id="households-list"></div>
+  </div>
+
+  <div class="card admin-only">
+    <div class="card-title"><span class="icon">🌾</span> Rasenmäher &amp; Haus</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name des Rasenmähers</label>
+        <input type="text" id="set-mower-name" maxlength="120" autocomplete="off" placeholder="z.B. Herr Mustermann">
+      </div>
+      <div class="form-group">
+        <label>E-Mail des Rasenmähers</label>
+        <input type="email" id="set-mower-email" maxlength="200" autocomplete="off" placeholder="mustermann@example.org">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Adresse des Hauses</label>
+      <input type="text" id="set-house-address" maxlength="200" autocomplete="off" placeholder="Straße, Ort">
+    </div>
+    <button type="button" class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+    <div class="info-text">Wird für die Mail-Vorlage „Rasenmäher beauftragen“ verwendet. Die Mail öffnet sich im eigenen Mailprogramm und wird von Hand abgeschickt.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔐</span> Konto &amp; Datensicherung</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button type="button" class="btn btn-outline" onclick="exportBackup()">💾 Datensicherung herunterladen</button>
+      <button type="button" class="btn btn-outline" onclick="signOut()">🚪 Abmelden</button>
+    </div>
+    <div class="info-text">Die Datensicherung enthält alle Daten (inkl. Fotos) als JSON-Datei.</div>
+  </div>
+</div>
+
+</main>
+
+<!-- ===== BOOKING MODAL ===== -->
+<div class="modal-overlay" id="modal-booking">
+  <div class="modal">
+    <div class="modal-title">📅 Neue Buchung</div>
+    <div class="form-group">
+      <label>Haushalt</label>
+      <select id="book-household" onchange="updateBookingPersons()"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Anreise</label>
+        <input type="date" id="book-start" oninput="updateBookCostPreview()">
+      </div>
+      <div class="form-group">
+        <label>Abreise</label>
+        <input type="date" id="book-end" oninput="updateBookCostPreview()">
+      </div>
+    </div>
+
+    <!-- Befreite Personen Checkboxen -->
+    <div id="book-exempt-persons" style="display:none;margin-bottom:14px">
+      <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">🎟 Befreite Personen – wer ist dabei?</div>
+      <div id="book-exempt-checkboxes" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <!-- Zusätzliche zahlende Personen -->
+    <div class="form-group">
+      <label>Weitere zahlende Personen</label>
+      <input type="number" id="book-extra-persons" min="0" max="20" value="0" oninput="updateBookCostPreview()">
+      <div class="info-text">Personen die zusätzlich zu den befreiten mitkommen und zahlen</div>
+    </div>
+
+    <div class="form-group">
+      <label>Notizen</label>
+      <textarea id="book-notes" placeholder="z.B. Geburtstag, Familienfest..."></textarea>
+    </div>
+    <div id="book-cost-preview" class="alert alert-info" style="display:none"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-booking')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveBooking()">Buchung speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOUSEHOLD MODAL ===== -->
+<div class="modal-overlay" id="modal-household">
+  <div class="modal">
+    <div class="modal-title" id="hh-modal-title">👨‍👩‍👧 Haushalt hinzufügen</div>
+    <input type="hidden" id="hh-edit-id">
+    <div class="form-group">
+      <label>Name / Bezeichnung</label>
+      <input type="text" id="hh-name" placeholder="z.B. Familie Müller oder Tante Berta">
+    </div>
+    <div class="form-group">
+      <label>Kontakt (optional)</label>
+      <input type="text" id="hh-contact" placeholder="Telefon oder E-Mail">
+    </div>
+    <div class="form-group">
+      <label>Farbe im Kalender</label>
+      <select id="hh-color">
+        <option value="1">🟢 Grün</option>
+        <option value="2">🟣 Lila</option>
+        <option value="3">🔵 Blau</option>
+        <option value="4">🟤 Braun</option>
+        <option value="5">🔴 Rot-Rosa</option>
+        <option value="6">🩵 Türkis</option>
+        <option value="7">🟡 Gelb-Grün</option>
+        <option value="8">🔴 Rot</option>
+      </select>
+    </div>
+    <div style="background:var(--green-pale);border:1px solid #9FE1CB;border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="font-size:0.82rem;font-weight:600;color:#085041;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">🎟 Von Tagespauschale befreite Personen (max. 2)</div>
+      <div class="info-text" style="margin-bottom:10px;color:#085041">Diese Personen zahlen nie – auch wenn sie mitbuchen. Zusätzliche Mitreisende zahlen normal.</div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Person 1 (Name)</label>
+          <input type="text" id="hh-exempt1" placeholder="z.B. Oma Maria">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Person 2 (Name)</label>
+          <input type="text" id="hh-exempt2" placeholder="z.B. Opa Klaus">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-household')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveHousehold()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EXPENSE MODAL ===== -->
+<div class="modal-overlay" id="modal-expense">
+  <div class="modal">
+    <div class="modal-title">🧾 Ausgabe buchen</div>
+    <div class="form-group">
+      <label>Beschreibung</label>
+      <input type="text" id="exp-desc" placeholder="z.B. Rasenmäher-Reparatur">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Betrag (€)</label>
+        <input type="number" id="exp-amount" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>Datum</label>
+        <input type="date" id="exp-date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Kategorie</label>
+      <select id="exp-cat">
+        <option value="Garten">🌿 Garten</option>
+        <option value="Haus">🏠 Haus</option>
+        <option value="Mäher">🌾 Externer Mäher</option>
+        <option value="Heizung">🔥 Heizung/Energie</option>
+        <option value="Reparatur">🔧 Reparatur</option>
+        <option value="Sonstiges">📦 Sonstiges</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Beleg (Foto, optional)</label>
+      <div id="exp-receipt-preview" style="display:none;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img id="exp-receipt-img" style="height:80px;border-radius:8px;border:1px solid var(--border);object-fit:cover;max-width:120px" />
+          <div>
+            <div class="badge badge-green" style="margin-bottom:6px">Beleg hochgeladen ✅</div><br>
+            <button type="button" class="btn btn-outline btn-sm" onclick="removeExpenseReceipt()">✕ Entfernen</button>
+          </div>
+        </div>
+      </div>
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:#1a2320;font-weight:600;background:#eef0f4;padding:8px 14px;border-radius:7px;border:1.5px dashed var(--border)" id="exp-receipt-upload-label">
+        📷 Beleg-Foto hochladen
+        <input type="file" accept="image/*" id="exp-receipt-input" style="display:none" onchange="handleExpenseReceipt(this)">
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-expense')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveExpense()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ======================================
+// HILFSFUNKTIONEN (Sicherheit, Datum, Bilder)
+// ======================================
+const _ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+// Nutzertext für die Ausgabe in HTML escapen (verhindert Einschleusen von Skripten)
+function esc(v) { return v == null ? '' : String(v).replace(/[&<>"']/g, c => _ESC[c]); }
+// Nur echte Bild-Data-URLs zulassen
+function safeImg(src) { return (typeof src === 'string' && src.startsWith('data:image/')) ? esc(src) : ''; }
+// Lokales Datum als YYYY-MM-DD (toISOString() liefert UTC und damit nachts das falsche Datum)
+function localDateStr(d = new Date()) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+// Foto verkleinern, damit der gemeinsame Datensatz nicht mit Megabytes an Handyfotos anschwillt
+function compressImage(file, maxDim = 1280, quality = 0.72) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(fr.error);
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => resolve(fr.result);
+      img.onload = () => {
+        try {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(img.width * scale));
+          c.height = Math.max(1, Math.round(img.height * scale));
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          resolve(c.toDataURL('image/jpeg', quality));
+        } catch (e) { resolve(fr.result); }
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+// ======================================
+// STATE
+// ======================================
+const ARRAY_KEYS = ['households', 'bookings', 'requests', 'departures', 'expenses', 'seasonalAssignments', 'nachfolgerNotes', 'customTasks'];
+const MAP_KEYS = ['tasksDone', 'depPhotos', 'settings'];
+
+function defaultState() {
+  return {
+    households: [],
+    bookings: [],
+    requests: [],    // Buchungsanfragen (noch nicht bestätigt): { id, householdId, start, end, notes, createdAt }
+    departures: [],
+    expenses: [],
+    rasenLastMowed: null,
+    rasenPhoto: null,
+    depPhotos: {},
+    tasksDone: {},
+    seasonalAssignments: [],
+    nachfolgerNotes: [],
+    customTasks: [], // { id, text, year, done }
+    settings: {},    // { mowerName, mowerEmail, houseAddress }
+    calYear: new Date().getFullYear(),
+    calMonth: new Date().getMonth(),
+  };
+}
+let state = defaultState();
+
+// Geladene Daten prüfen und bereinigen: Einträge mit unsauberen IDs/Datumswerten werden verworfen,
+// Zahlen und Texte auf den richtigen Typ gebracht. So kann nichts Unerwartetes in die Oberfläche gelangen.
+function normalizeState() {
+  const isDate = s => typeof s === 'string' && /^\d{4}-\d\d-\d\d$/.test(s);
+  const str = v => (v == null ? '' : String(v));
+  ARRAY_KEYS.forEach(k => {
+    const arr = Array.isArray(state[k]) ? state[k] : [];
+    state[k] = arr.filter(x => x && typeof x === 'object' && /^[\w.-]+$/.test(String(x.id)));
+    state[k].forEach(x => { x.id = String(x.id); });
+  });
+  MAP_KEYS.forEach(k => {
+    if (!state[k] || typeof state[k] !== 'object' || Array.isArray(state[k])) state[k] = {};
+  });
+  if (!isDate(state.rasenLastMowed)) state.rasenLastMowed = null;
+
+  state.households.forEach(h => {
+    h.name = str(h.name); h.contact = str(h.contact);
+    h.color = Math.min(8, Math.max(1, parseInt(h.color) || 1));
+    h.exemptPersons = Array.isArray(h.exemptPersons) ? h.exemptPersons.map(str) : [];
+  });
+  state.bookings = state.bookings.filter(b => isDate(b.start) && isDate(b.end));
+  state.bookings.forEach(b => {
+    b.householdId = str(b.householdId);
+    b.persons = Number(b.persons) || 0;
+    if (b.extraPersons !== undefined) b.extraPersons = Number(b.extraPersons) || 0;
+    if (b.exemptPersons !== undefined) b.exemptPersons = Array.isArray(b.exemptPersons) ? b.exemptPersons.map(str) : [];
+    if (b.paid !== undefined) b.paid = !!b.paid;
+    if (b.notes != null) b.notes = str(b.notes);
+  });
+  state.requests = state.requests.filter(r => isDate(r.start) && isDate(r.end) && r.end > r.start);
+  state.requests.forEach(r => { r.householdId = str(r.householdId); r.notes = str(r.notes).slice(0, 500); r.createdAt = str(r.createdAt); });
+  state.departures = state.departures.filter(d => isDate(d.date));
+  state.departures.forEach(d => {
+    d.householdId = str(d.householdId);
+    d.penalty = Number(d.penalty) || 0;
+    d.paid = !!d.paid;
+    d.undone = Array.isArray(d.undone) ? d.undone.map(str) : [];
+    d.tasks = (Array.isArray(d.tasks) ? d.tasks : []).filter(t => t && typeof t === 'object');
+    d.tasks.forEach(t => { t.id = str(t.id); t.text = str(t.text); t.done = !!t.done; t.photo = typeof t.photo === 'string' ? t.photo : null; });
+  });
+  state.expenses = state.expenses.filter(e => isDate(e.date));
+  state.expenses.forEach(e => {
+    e.amount = Number(e.amount) || 0; e.desc = str(e.desc); e.cat = str(e.cat);
+    e.receipt = typeof e.receipt === 'string' ? e.receipt : null;
+  });
+  state.seasonalAssignments.forEach(a => {
+    a.taskId = str(a.taskId); a.householdId = str(a.householdId);
+    a.year = Number(a.year) || 0; a.done = !!a.done;
+    a.bookingId = a.bookingId ? str(a.bookingId) : null;
+  });
+  state.nachfolgerNotes.forEach(n => { n.text = str(n.text); n.householdId = str(n.householdId); n.date = str(n.date); n.done = !!n.done; });
+  state.customTasks.forEach(t => { t.text = str(t.text); t.year = Number(t.year) || 0; t.done = !!t.done; });
+
+  // Einstellungen (Rasenmäher-Kontakt, Hausadresse)
+  const st = (state.settings && typeof state.settings === 'object' && !Array.isArray(state.settings)) ? state.settings : {};
+  const mail = str(st.mowerEmail).trim();
+  state.settings = {
+    mowerName: str(st.mowerName).slice(0, 120),
+    mowerEmail: /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]+$/.test(mail) ? mail : '',
+    houseAddress: str(st.houseAddress).slice(0, 200)
+  };
+
+  // Checkliste, Fotos und Protokoll direkt an der Buchung
+  state.bookings.forEach(b => {
+    if (b.checklist !== undefined) {
+      const c = {};
+      if (b.checklist && typeof b.checklist === 'object' && !Array.isArray(b.checklist))
+        Object.keys(b.checklist).forEach(k => { if (/^[\w-]+$/.test(k)) c[k] = !!b.checklist[k]; });
+      b.checklist = c;
+    }
+    if (b.photos !== undefined) {
+      const ph = {};
+      if (b.photos && typeof b.photos === 'object' && !Array.isArray(b.photos))
+        Object.keys(b.photos).forEach(k => { if (/^[\w-]+$/.test(k) && typeof b.photos[k] === 'string' && b.photos[k].startsWith('data:image/')) ph[k] = b.photos[k]; });
+      b.photos = ph;
+    }
+    if (b.protocol !== undefined && b.protocol !== null) {
+      const p = b.protocol;
+      if (typeof p !== 'object' || Array.isArray(p) || !/^\d{4}-\d\d-\d\d/.test(str(p.finalizedAt))) delete b.protocol;
+      else {
+        p.finalizedAt = str(p.finalizedAt); p.manual = !!p.manual; p.paid = !!p.paid; p.legacy = !!p.legacy;
+        p.penalty = Number(p.penalty) || 0;
+        p.undone = Array.isArray(p.undone) ? p.undone.map(str) : [];
+        p.mowerOrderedAt = p.mowerOrderedAt ? str(p.mowerOrderedAt) : null;
+      }
+    } else if (b.protocol === null) delete b.protocol;
+  });
+
+  // Altdaten: frühere Abfahrtsprotokolle werden der passenden Buchung zugeordnet
+  // (gleicher Haushalt, Abreisedatum = Abfahrtsdatum) und aus der losen Liste entfernt.
+  state.departures = state.departures.filter(d => {
+    const b = state.bookings.find(x => x.householdId === d.householdId && x.end === d.date && !x.protocol);
+    if (!b) return true;
+    b.checklist = {}; b.photos = {};
+    d.tasks.forEach(t => {
+      if (/^[\w-]+$/.test(t.id)) {
+        b.checklist[t.id] = !!t.done;
+        if (t.photo && t.photo.startsWith('data:image/')) b.photos[t.id] = t.photo;
+      }
+    });
+    b.protocol = { finalizedAt: d.date + 'T17:00:00', manual: true, legacy: true, paid: !!d.paid, penalty: d.penalty, undone: d.undone.slice(), mowerOrderedAt: null };
+    return false;
+  });
+}
+
+function applyState(remote) {
+  const cal = { calYear: state.calYear, calMonth: state.calMonth };
+  state = Object.assign(defaultState(), remote || {}, cal);
+  normalizeState();
+}
+
+function snapshotState() {
+  const s = JSON.parse(JSON.stringify(state));
+  delete s.calYear;
+  delete s.calMonth;
+  return s;
+}
+
+// ======================================
+// SUPABASE (Anmeldung + Datenzugriff)
+// ======================================
+const SUPABASE_URL = 'https://afjvwxdaqulpfbkncclb.supabase.co';
+// Der anon-Key ist für die Nutzung im Browser vorgesehen. Geschützt sind die Daten durch den
+// Familien-Login und die Zugriffsregeln (Row Level Security) in Supabase – siehe supabase_setup.sql.
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmanZ3eGRhcXVscGZia25jY2xiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MTY5NTAsImV4cCI6MjA5NTA5Mjk1MH0.R9l24nBC7ysKqNu-MwAGocQ6fASXXl5TVd-vvCB3_js';
+const STATE_KEY = 'ferienhaus_state';
+const SESSION_LS = 'ferienhaus_session';
+// Die Seite fragt nur ein Passwort ab. Im Hintergrund wird damit das gemeinsame Familien-Konto angemeldet.
+const LOGIN_EMAIL = 'm-c.riedel@outlook.de';
+
+class AuthError extends Error {
+  constructor(msg) { super(msg || 'Nicht angemeldet'); this.name = 'AuthError'; }
+}
+
+let session = null;
+function readSession() { try { return JSON.parse(localStorage.getItem(SESSION_LS) || 'null'); } catch (e) { return null; } }
+function writeSession(s) { try { if (s) localStorage.setItem(SESSION_LS, JSON.stringify(s)); else localStorage.removeItem(SESSION_LS); } catch (e) {} }
+
+async function authRequest(grant, body) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=${grant}`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  let data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) {
+    const msg = data.error_description || data.msg || data.message || 'Anmeldung fehlgeschlagen';
+    if (grant === 'refresh_token') throw new AuthError(msg);
+    throw new Error(/invalid login credentials/i.test(msg) ? 'Das Passwort ist falsch.' : msg);
+  }
+  session = {
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at: Date.now() + (Number(data.expires_in) || 3600) * 1000
+  };
+  writeSession(session);
+  return session;
+}
+function signIn(email, password) { return authRequest('password', { email, password }); }
+function refreshSession() {
+  if (!session || !session.refresh_token) return Promise.reject(new AuthError());
+  return authRequest('refresh_token', { refresh_token: session.refresh_token });
+}
+function signOut() {
+  const token = session && session.access_token;
+  session = null;
+  writeSession(null);
+  const done = () => location.reload();
+  if (!token) return done();
+  fetch(`${SUPABASE_URL}/auth/v1/logout`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` } })
+    .then(done, done);
+}
+async function getToken() {
+  if (!session || !session.access_token) throw new AuthError();
+  if (Date.now() > session.expires_at - 60000) await refreshSession();
+  return session.access_token;
+}
+
+async function api(path, opts = {}, retry = true) {
+  const token = await getToken();
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...opts,
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers || {}) }
+  });
+  if (res.status === 401 && retry) {
+    await refreshSession();
+    return api(path, opts, false);
+  }
+  return res;
+}
+async function dbError(res) {
+  let j = {};
+  try { j = await res.json(); } catch (e) {}
+  const err = new Error(j.message || ('HTTP ' + res.status));
+  err.code = j.code; err.status = res.status;
+  return err;
+}
+
+let dbVersion = 0;        // Version der Zeile, auf der unser Stand basiert
+let dbRowExists = false;  // gibt es die Zeile schon in der Datenbank?
+let baseState = null;     // Stand beim letzten Laden/Speichern (Grundlage fürs Zusammenführen)
+
+async function dbLoad() {
+  const res = await api(`data?key=eq.${STATE_KEY}&select=value,version`);
+  if (!res.ok) {
+    const err = await dbError(res);
+    if (['42P01', 'PGRST205', '42703', 'PGRST204'].includes(err.code)) err.setup = true;
+    throw err;
+  }
+  const rows = await res.json();
+  if (rows.length === 0) return { exists: false, value: null, version: 0 };
+  return { exists: true, value: JSON.parse(rows[0].value), version: Number(rows[0].version) || 0 };
+}
+
+// Speichert nur, wenn die Version in der Datenbank noch die ist, auf der wir aufbauen.
+// Gibt false zurück, wenn jemand zwischenzeitlich gespeichert hat (Konflikt).
+async function dbSaveOnce(valueObj) {
+  const value = JSON.stringify(valueObj);
+  if (dbRowExists) {
+    const res = await api(`data?key=eq.${STATE_KEY}&version=eq.${dbVersion}&select=key`, {
+      method: 'PATCH',
+      headers: { 'Prefer': 'return=representation' },
+      body: JSON.stringify({ value, version: dbVersion + 1 })
+    });
+    if (!res.ok) throw await dbError(res);
+    const rows = await res.json();
+    return rows.length === 1;
+  }
+  const res = await api('data', {
+    method: 'POST',
+    headers: { 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ key: STATE_KEY, value, version: 1 })
+  });
+  if (res.status === 409) return false;
+  if (!res.ok) throw await dbError(res);
+  return true;
+}
+
+// Drei-Wege-Zusammenführung: was WIR seit dem letzten Abgleich geändert haben (base -> mine),
+// wird auf den neuen Stand der Datenbank (theirs) angewendet. Änderungen anderer bleiben erhalten.
+function merge3(base, mine, theirs) {
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(mine) || !isObj(theirs)) return mine;
+  const b = isObj(base) ? base : {};
+  const out = Object.assign({}, theirs);
+  new Set(Object.keys(mine).concat(Object.keys(b))).forEach(k => {
+    if (!(k in mine)) { if ((k in b) && same(b[k], theirs[k])) delete out[k]; return; } // lokal entfernt
+    if (same(b[k], mine[k])) return;                                                   // lokal unverändert
+    if (!(k in theirs) || same(b[k], theirs[k])) { out[k] = mine[k]; return; }         // nur lokal geändert
+    out[k] = merge3(b[k], mine[k], theirs[k]);                                         // beide geändert
+  });
+  return out;
+}
+
+function mergeStates(base, mine, theirs) {
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const out = Object.assign({}, theirs);
+  ARRAY_KEYS.forEach(k => {
+    const b = (base && base[k]) || [], m = mine[k] || [];
+    let res = (theirs[k] || []).slice();
+    const bMap = new Map(b.map(x => [x.id, x])), mMap = new Map(m.map(x => [x.id, x]));
+    b.forEach(x => { if (!mMap.has(x.id)) res = res.filter(y => y.id !== x.id); }); // lokal gelöscht
+    m.forEach(x => {
+      const orig = bMap.get(x.id);
+      const idx = res.findIndex(y => y.id === x.id);
+      if (!orig) { if (idx >= 0) res[idx] = x; else res.push(x); }          // lokal neu
+      else if (!same(orig, x) && idx >= 0) res[idx] = merge3(orig, x, res[idx]); // lokal geändert (feldweise)
+    });
+    out[k] = res;
+  });
+  MAP_KEYS.forEach(k => {
+    const b = (base && base[k]) || {}, m = mine[k] || {}, t = Object.assign({}, theirs[k] || {});
+    Object.keys(b).forEach(key => { if (!(key in m)) delete t[key]; });
+    Object.keys(m).forEach(key => { if (!(key in b) || !same(b[key], m[key])) t[key] = m[key]; });
+    out[k] = t;
+  });
+  Object.keys(mine).forEach(k => {
+    if (ARRAY_KEYS.includes(k) || MAP_KEYS.includes(k)) return;
+    if (!same(base ? base[k] : undefined, mine[k])) out[k] = mine[k];
+  });
+  return out;
+}
+
+// ======================================
+// SPEICHERN (entprellt, seriell, mit Fehleranzeige)
+// ======================================
+let _saveTimer = null, _saveChain = Promise.resolve(), _statusTimer = null;
+let _unsaved = false, _saving = false, _loaded = false;
+
+function scheduleSave() {
+  _unsaved = true;
+  if (typeof renderGlobalAlerts === 'function') renderGlobalAlerts();
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => { _saveTimer = null; save(); }, 800);
+}
+function save() {
+  _unsaved = true;
+  if (typeof renderGlobalAlerts === 'function') renderGlobalAlerts();
+  if (_saveTimer) { clearTimeout(_saveTimer); _saveTimer = null; }
+  _saveChain = _saveChain.then(doSave, doSave);
+  return _saveChain;
+}
+
+async function doSave() {
+  if (!_unsaved) return true;
+  if (!_loaded) { setSaveStatus('error', 'Daten sind noch nicht geladen – es wurde nichts gespeichert.'); return false; }
+  _saving = true;
+  _unsaved = false;
+  setSaveStatus('saving');
+  let merged = false;
+  try {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const mine = snapshotState();
+      if (await dbSaveOnce(mine)) {
+        dbVersion += 1; dbRowExists = true; baseState = mine;
+        _saving = false;
+        if (merged) { renderCurrentSection(); setSaveStatus('info', 'Gespeichert – Änderungen anderer Haushalte wurden übernommen.'); }
+        else setSaveStatus('saved');
+        return true;
+      }
+      // Konflikt: zwischenzeitlich hat jemand anderes gespeichert -> neu laden und zusammenführen
+      const remote = await dbLoad();
+      const mergedState = mergeStates(baseState, mine, remote.value || {});
+      dbVersion = remote.version; dbRowExists = remote.exists;
+      applyState(remote.value || {});
+      baseState = snapshotState();       // normalisierter Stand der Datenbank
+      applyState(mergedState);
+      merged = true;
+    }
+    throw new Error('Wegen paralleler Änderungen nicht möglich – bitte Seite neu laden.');
+  } catch (e) {
+    _saving = false;
+    _unsaved = true;
+    if (e && e.name === 'AuthError') {
+      await showLogin('Sitzung abgelaufen – bitte erneut anmelden.');
+      return doSave();
+    }
+    setSaveStatus('error', 'Speichern fehlgeschlagen: ' + ((e && e.message) || 'Unbekannter Fehler'));
+    return false;
+  }
+}
+
+function setSaveStatus(kind, msg) {
+  let el = document.getElementById('save-status');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'save-status';
+    el.setAttribute('role', 'status');
+    el.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:3000;padding:10px 16px;border-radius:12px;font-size:0.85rem;font-weight:600;box-shadow:var(--shadow-lg);max-width:92vw;display:none;align-items:center;gap:12px';
+    document.body.appendChild(el);
+  }
+  clearTimeout(_statusTimer);
+  const look = {
+    saving: ['#eef0f4', '#1a2320', 'Speichert …'],
+    saved: ['#E1F5EE', '#085041', 'Gespeichert ✓'],
+    info: ['#FAEEDA', '#633806', msg],
+    error: ['#FAECE7', '#712B13', msg]
+  }[kind];
+  el.style.background = look[0];
+  el.style.color = look[1];
+  el.textContent = look[2] || '';
+  if (kind === 'error') {
+    const b = document.createElement('button');
+    b.className = 'btn btn-outline btn-sm';
+    b.textContent = 'Erneut versuchen';
+    b.onclick = () => save();
+    el.appendChild(b);
+  }
+  el.style.display = 'flex';
+  if (kind === 'saved') _statusTimer = setTimeout(() => { el.style.display = 'none'; }, 1800);
+  if (kind === 'info') _statusTimer = setTimeout(() => { el.style.display = 'none'; }, 6000);
+}
+
+window.addEventListener('beforeunload', e => {
+  if (_unsaved || _saving) { e.preventDefault(); e.returnValue = ''; }
+});
+
+function renderCurrentSection() {
+  const active = document.querySelector('.section.active');
+  if (!active) return;
+  const id = active.id.replace('section-', '');
+  if (id === 'departure') { renderDepChecklist(); return; } // Auswahl (Haushalt/Datum) nicht zurücksetzen
+  renderSection(id);
+}
+
+// Beim Zurückkehren in den Tab prüfen, ob andere zwischenzeitlich gespeichert haben
+async function refreshIfChanged() {
+  if (!_loaded || _unsaved || _saving) return;
+  if (document.querySelector('.modal-overlay.open')) return;
+  try {
+    const res = await api(`data?key=eq.${STATE_KEY}&select=version`);
+    if (!res.ok) return;
+    const rows = await res.json();
+    const v = rows.length ? (Number(rows[0].version) || 0) : 0;
+    if (v === dbVersion) return;
+    const r = await dbLoad();
+    if (_unsaved || _saving) return;
+    dbVersion = r.version; dbRowExists = r.exists;
+    applyState(r.value || {});
+    baseState = snapshotState();
+    renderCurrentSection();
+  } catch (e) { /* stiller Fehler: nächster Versuch beim nächsten Tab-Wechsel */ }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshIfChanged(); });
+
+function exportBackup() {
+  const blob = new Blob([JSON.stringify(snapshotState(), null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ferienhaus-backup-' + localDateStr() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// ======================================
+// LADEN / ANMELDEN (Overlays)
+// ======================================
+function showLoader(msg) {
+  let el = document.getElementById('app-loader');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'app-loader';
+    el.style.cssText = 'position:fixed;inset:0;background:rgba(247,248,250,0.96);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-family:DM Sans,sans-serif';
+    el.innerHTML = `<div style="font-size:2rem">🏡</div><div id="loader-msg" style="color:#1a2320;font-size:1rem;font-weight:600"></div>`;
+    document.body.appendChild(el);
+  }
+  document.getElementById('loader-msg').textContent = msg || 'Laden…';
+}
+function hideLoader() {
+  const el = document.getElementById('app-loader');
+  if (el) el.remove();
+}
+
+function showLogin(msg) {
+  return new Promise(resolve => {
+    hideLoader();
+    const old = document.getElementById('login-overlay');
+    if (old) old.remove();
+    const el = document.createElement('div');
+    el.id = 'login-overlay';
+    el.style.cssText = 'position:fixed;inset:0;background:var(--cream);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
+    el.innerHTML = `<form id="login-form" style="background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:380px;box-shadow:var(--shadow-lg)">
+      <div style="font-size:2rem;text-align:center">🏡</div>
+      <div style="font-weight:700;font-size:1.2rem;text-align:center;margin:6px 0 4px">Ferienhaus – Familienverwaltung</div>
+      <div class="info-text" style="text-align:center;margin:0 0 18px">Bitte Passwort eingeben.</div>
+      <input type="text" name="username" autocomplete="username" value="ferienhaus" readonly tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <div class="form-group"><label for="login-pw">Passwort</label><input id="login-pw" type="password" autocomplete="current-password" required></div>
+      <div id="login-error" role="alert" style="color:var(--red);font-size:0.85rem;min-height:1.3em;margin-bottom:10px"></div>
+      <button class="btn btn-primary" type="submit" id="login-btn" style="width:100%;justify-content:center">Anmelden</button>
+    </form>`;
+    document.body.appendChild(el);
+    const pwEl = el.querySelector('#login-pw'), errEl = el.querySelector('#login-error'), btn = el.querySelector('#login-btn');
+    if (msg) errEl.textContent = msg;
+    pwEl.focus();
+    el.querySelector('#login-form').onsubmit = async ev => {
+      ev.preventDefault();
+      btn.disabled = true;
+      errEl.textContent = '';
+      try {
+        await signIn(LOGIN_EMAIL, pwEl.value);
+        el.remove();
+        resolve();
+      } catch (e) {
+        errEl.textContent = e.message || 'Anmeldung fehlgeschlagen';
+        btn.disabled = false;
+        pwEl.select();
+      }
+    };
+  });
+}
+
+function showLoadError(err) {
+  return new Promise(resolve => {
+    hideLoader();
+    const el = document.createElement('div');
+    el.id = 'load-error';
+    el.style.cssText = 'position:fixed;inset:0;background:var(--cream);z-index:9997;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center';
+    el.innerHTML = `<div style="font-size:2.5rem">⚠️</div>
+      <div id="load-error-title" style="font-size:1.1rem;font-weight:700;color:#1a2320"></div>
+      <div id="load-error-msg" style="color:#6b7c75;max-width:480px;line-height:1.6"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-primary" id="load-error-retry">Erneut versuchen</button>
+        <button class="btn btn-outline" id="load-error-logout">Abmelden</button>
+      </div>`;
+    document.body.appendChild(el);
+    const setup = !!(err && err.setup);
+    el.querySelector('#load-error-title').textContent = setup ? 'Datenbank noch nicht eingerichtet' : 'Daten konnten nicht geladen werden';
+    el.querySelector('#load-error-msg').textContent = setup
+      ? 'Bitte die Datei supabase_setup.sql im Supabase SQL Editor ausführen (Tabelle, Versionsspalte und Zugriffsregeln) und danach erneut versuchen.'
+      : ((err && err.message) || 'Unbekannter Fehler') + ' – es wird nichts gespeichert oder überschrieben, solange die Daten nicht geladen sind.';
+    el.querySelector('#load-error-retry').onclick = () => { el.remove(); resolve(); };
+    el.querySelector('#load-error-logout').onclick = () => signOut();
+  });
+}
+
+async function loadState() {
+  while (true) {
+    showLoader('Daten werden geladen…');
+    try {
+      const r = await dbLoad();
+      dbVersion = r.version;
+      dbRowExists = r.exists;
+      applyState(r.value || {});
+      baseState = snapshotState();
+      _loaded = true;
+      hideLoader();
+      return;
+    } catch (e) {
+      if (e && e.name === 'AuthError') { await showLogin(); continue; }
+      await showLoadError(e);
+    }
+  }
+}
+
+// ======================================
+// TASKS DATA
+// ======================================
+const TASKS = {
+  garden: [
+    { id: 'rasen', text: 'Rasen mähen', freq: 'Bei jeder Buchung (Pflicht, mit Foto)', penalty: 45 },
+    { id: 'bewaesserung', text: '💧 Rasenbewässerung', freq: 'Einmal pro Aufenthalt' },
+    { id: 'terrasse', text: 'Terrasse kehren', freq: 'Bei Abfahrt', penalty: 0 },
+    { id: 'garten-aufraeum', text: 'Gartenabfall entsorgen', freq: 'Bei Abfahrt', penalty: 0 },
+  ],
+  house: [
+    { id: 'sauber', text: 'Haus sauber hinterlassen', freq: 'Bei Abfahrt', penalty: 20, required: true },
+    { id: 'muell', text: 'Müll entsorgt', freq: 'Bei Abfahrt', penalty: 10, required: true },
+    { id: 'kuehlschrank', text: 'Kühlschrank geleert', freq: 'Bei Abfahrt', penalty: 10, required: true },
+    { id: 'fenster', text: 'Fenster & Türen geschlossen', freq: 'Bei Abfahrt', penalty: 0, required: true },
+    { id: 'heizung', text: 'Heizung auf Sparmodus', freq: 'Bei Abfahrt', penalty: 0, required: true },
+    { id: 'wasser', text: 'Wasser abgestellt', freq: 'Bei Abfahrt', penalty: 0 },
+  ],
+  seasonal: [
+    { id: 'moebl-raus', text: '🌸 Frühjahr: Gartenmöbel aufstellen', freq: 'März/April' },
+    { id: 'wintersch', text: '🌸 Frühjahr: Winterschutz entfernen', freq: 'März/April' },
+    { id: 'fenster-fruehjahr', text: '🪟 Fenster putzen Frühjahr', freq: 'März/April' },
+    { id: 'boot-saisonklar', text: '⛵ Boot saisonklar machen', freq: 'März/April' },
+    { id: 'hecke', text: '✂️ Hecke & Sträucher schneiden', freq: '2× pro Saison' },
+    { id: 'beete', text: '🌱 Beete jäten & pflegen', freq: 'Monatlich' },
+    { id: 'fenster-sommer', text: '🪟 Fenster putzen Sommer', freq: 'Juni/Juli' },
+    { id: 'moebl-ein', text: '🍂 Herbst: Gartenmöbel einräumen', freq: 'Oktober' },
+    { id: 'winter-fest', text: '🍂 Herbst: Haus winterfest machen', freq: 'Oktober' },
+    { id: 'laub', text: '🍂 Herbst: Laub harken', freq: 'Oktober/November' },
+    { id: 'rohr', text: '🍂 Herbst: Wasserrohre entleeren', freq: 'Oktober' },
+    { id: 'boot-winterfest', text: '⛵ Boot winterfest machen', freq: 'Oktober' },
+  ],
+};
+
+const REQUIRED_DEP = [
+  { id: 'rasen', text: 'Rasen gemäht – Foto als Nachweis hochladen', penalty: 45, photo: true },
+  { id: 'saugen-wischen', text: '🧹 Saugen und wischen', penalty: 0 },
+  { id: 'grundordnung', text: '🏠 Haus & Garten Grundordnung geschaffen', penalty: 0 },
+  { id: 'gartenmoebel', text: '🪑 Gartenmöbel gesäubert', penalty: 0 },
+  { id: 'sauber', text: 'Haus sauber hinterlassen', penalty: 20 },
+  { id: 'muell', text: 'Müll vollständig entsorgt (Müllbeutel, Pfand- & Glasflaschen)', penalty: 10 },
+  { id: 'muell-tonne', text: '🗑 Mülltonnen gemäß Abfallkalender rausgestellt', penalty: 0 },
+  { id: 'kurtaxe', text: '🏖 Kurtaxe bezahlt – Foto als Nachweis hochladen (<a href="https://www.ostseebad-dierhagen.de/de/dierhagen/i-tourismusinfo" target="_blank" rel="noopener noreferrer" style="color:var(--green)">i-Tourismusinfo Dierhagen</a>)', penalty: 0, photo: true },
+  { id: 'kuehlschrank', text: 'Kühlschrank geleert & gereinigt', penalty: 10 },
+  { id: 'kaffee', text: '☕ Geschlossenes Kaffeepaket vorhanden', penalty: 0 },
+  { id: 'fenster', text: 'Alle Fenster & Türen geschlossen', penalty: 0 },
+  { id: 'licht', text: '💡 Licht aus überall kontrolliert', penalty: 0 },
+  { id: 'stecker', text: '🔌 Alle Stecker gezogen (WLAN, Kaffeemaschine, Toaster, Wasserkocher, Boiler Bad, Fernseher etc.)', penalty: 0 },
+  { id: 'heizung-stecker', text: '🌡 Heizung komplett abstellen – Stecker an allen Heizkörpern ziehen', penalty: 0 },
+  { id: 'wasser', text: '💧 Wasser im Schacht abgedreht (am Zähler)', penalty: 0 },
+  { id: 'fahrraeder', text: '🚲 Fahrräder ins Haus – angeschlossen gestellt', penalty: 0 },
+  { id: 'schuppen', text: '🔒 Schuppentüren geschlossen und verrammelt', penalty: 0 },
+];
+
+// ======================================
+// ABFALLKALENDER 2026 – Dierhagen Strand
+// ======================================
+const ABFALL_2026 = [
+  // R = Restabfall, B = Biotonne, P = Papiertonne, G = Gelber Sack, Rmo = Restabfall monatlich
+  // Januar
+  { date:'2026-01-02', types:['R','B','Rmo'] },
+  { date:'2026-01-08', types:['T'] },
+  { date:'2026-01-14', types:['G'] },
+  // ⚠ prüfen: Gelber Sack 28.01. fehlt (sonst 14-tägig mittwochs)
+  { date:'2026-01-15', types:['R','B'] },
+  { date:'2026-01-19', types:['P'] },
+  { date:'2026-01-26', types:['R','B'] }, // ⚠ prüfen: Montag – sonst immer donnerstags (29.01.?)
+  // Februar
+  { date:'2026-02-12', types:['R','B','Rmo'] },
+  { date:'2026-02-11', types:['G'] },
+  { date:'2026-02-16', types:['P'] },
+  { date:'2026-02-25', types:['G'] },
+  { date:'2026-02-26', types:['R','B'] },
+  // März
+  { date:'2026-03-11', types:['G'] },
+  { date:'2026-03-12', types:['R','B','Rmo'] },
+  { date:'2026-03-16', types:['P'] },
+  { date:'2026-03-25', types:['G'] },
+  { date:'2026-03-26', types:['R','B'] },
+  // April
+  { date:'2026-04-09', types:['G'] },
+  { date:'2026-04-10', types:['R','B','Rmo'] },
+  { date:'2026-04-13', types:['P'] },
+  { date:'2026-04-22', types:['G'] },
+  { date:'2026-04-23', types:['R','B'] },
+  // Mai
+  { date:'2026-05-06', types:['G'] },
+  { date:'2026-05-07', types:['R','B','Rmo'] },
+  { date:'2026-05-11', types:['P'] },
+  { date:'2026-05-20', types:['G'] },
+  { date:'2026-05-21', types:['R','B'] },
+  // Juni
+  { date:'2026-06-03', types:['G'] },
+  { date:'2026-06-04', types:['R','B','Rmo'] },
+  { date:'2026-06-08', types:['P'] },
+  { date:'2026-06-17', types:['G'] },
+  { date:'2026-06-18', types:['R','B'] },
+  // Juli
+  { date:'2026-07-01', types:['G'] },
+  { date:'2026-07-02', types:['R','B','Rmo'] },
+  { date:'2026-07-06', types:['P'] },
+  { date:'2026-07-15', types:['G'] },
+  { date:'2026-07-16', types:['R','B'] },
+  { date:'2026-07-29', types:['G'] },
+  { date:'2026-07-30', types:['R','B'] },
+  // August
+  { date:'2026-08-03', types:['P'] },
+  { date:'2026-08-12', types:['G'] },
+  { date:'2026-08-13', types:['R','B','Rmo'] },
+  { date:'2026-08-26', types:['G'] },
+  { date:'2026-08-27', types:['R','B'] },
+  { date:'2026-08-31', types:['P'] },
+  // September
+  { date:'2026-09-09', types:['G'] },
+  { date:'2026-09-10', types:['R','B','Rmo'] },
+  { date:'2026-09-23', types:['G'] },
+  { date:'2026-09-24', types:['R','B'] },
+  { date:'2026-09-28', types:['P'] },
+  // Oktober
+  { date:'2026-10-07', types:['G'] },
+  { date:'2026-10-08', types:['R','B','Rmo'] },
+  { date:'2026-10-21', types:['G'] },
+  // ⚠ prüfen: Gelber Sack 04.11. fehlt (sonst 14-tägig mittwochs)
+  { date:'2026-10-22', types:['R','B'] },
+  { date:'2026-10-26', types:['P'] },
+  // November
+  { date:'2026-11-05', types:['R','B','Rmo'] },
+  { date:'2026-11-18', types:['G'] },
+  { date:'2026-11-19', types:['R','B'] },
+  { date:'2026-11-23', types:['P'] },
+  // Dezember
+  { date:'2026-12-02', types:['G'] },
+  { date:'2026-12-03', types:['R','B','Rmo'] },
+  { date:'2026-12-16', types:['G'] },
+  { date:'2026-12-17', types:['R','B'] },
+  { date:'2026-12-19', types:['P'] }, // ⚠ prüfen: Samstag – Papier sonst montags (21.12.?)
+  { date:'2026-12-30', types:['G'] },
+  { date:'2026-12-31', types:['R','B'] },
+];
+
+// Nach Datum sortieren (Reihenfolge im Quelltext egal)
+ABFALL_2026.sort((a, b) => a.date.localeCompare(b.date));
+
+// Pre-built lookup map for O(1) access instead of O(n) filter per day
+const ABFALL_MAP = {};
+ABFALL_2026.forEach(a => { ABFALL_MAP[a.date] = a.types; });
+
+const ABFALL_LABELS = {
+  R: { label: 'Restabfall', color: '#888780', bg: '#F1EFE8' },
+  B: { label: 'Biotonne', color: '#3B6D11', bg: '#EAF3DE' },
+  P: { label: 'Papiertonne', color: '#185FA5', bg: '#E6F1FB' },
+  G: { label: 'Gelber Sack', color: '#854F0B', bg: '#FAEEDA' },
+  Rmo: { label: 'Restabfall monatl.', color: '#5F5E5A', bg: '#F1EFE8' },
+  T: { label: 'Tannenbaum', color: '#3B6D11', bg: '#EAF3DE' },
+};
+
+function getAbfallInRange(startStr, endStr) {
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  return ABFALL_2026.filter(a => {
+    const d = new Date(a.date);
+    return d >= start && d <= end;
+  });
+}
+
+function getNextAbfall(afterStr) {
+  const after = new Date(afterStr);
+  return ABFALL_2026.filter(a => new Date(a.date) > after).slice(0, 3);
+}
+
+function isBookedOn(dateStr) {
+  return state.bookings.some(b => dateStr >= b.start && dateStr <= b.end);
+}
+
+function renderAbfallBadges(types) {
+  return types.map(t => {
+    const info = ABFALL_LABELS[t] || { label: t, color: '#888', bg: '#eee' };
+    return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:0.78rem;font-weight:600;background:${info.bg};color:${info.color};border:1px solid ${info.color}30">${info.label}</span>`;
+  }).join(' ');
+}
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if(b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active'); });
+  const moreBtn = document.getElementById('nav-more');
+  if(moreBtn) moreBtn.classList.toggle('active', ['costs', 'settings', 'protocol'].includes(id));
+  renderSection(id);
+}
+
+function renderSection(id) {
+  if(typeof renderGlobalAlerts === 'function') renderGlobalAlerts();
+  if(id === 'dashboard') renderDashboard();
+  if(id === 'calendar') renderCalendar();
+  if(id === 'tasks') renderTasks();
+  if(id === 'nachfolger') renderNachfolger();
+  if(id === 'departure') renderDeparture();
+  if(id === 'protocol') renderProtocol();
+  if(id === 'costs') renderCosts();
+  if(id === 'settings') renderSettings();
+}
+
+// ======================================
+// MODAL
+// ======================================
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ======================================
+// DASHBOARD
+// ======================================
+function renderDashboard() {
+  const today = new Date();
+  document.getElementById('today-date').textContent = today.toLocaleDateString('de-DE', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // Stats
+  const thisYear = today.getFullYear();
+  const yearBookings = state.bookings.filter(b => new Date(b.start).getFullYear() === thisYear);
+  let totalDays = 0;
+  yearBookings.forEach(b => {
+    const d = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+    totalDays += d;
+  });
+  document.getElementById('stat-buchungen').textContent = yearBookings.length;
+  document.getElementById('stat-tage').textContent = totalDays;
+
+  // Topf
+  const topf = calcTopf();
+  document.getElementById('stat-topf').textContent = topf.toFixed(0) + ' €';
+
+  // Nachfolger notes alert
+  const openNotes = (state.nachfolgerNotes || []).filter(n => !n.done);
+  const nachEl = document.getElementById('dashboard-nachfolger');
+  if(nachEl) {
+    if(openNotes.length > 0) {
+      nachEl.innerHTML = `<div class="alert alert-warn" style="cursor:pointer" onclick="showSection('nachfolger')">
+        <span>📝</span>
+        <div><strong>${openNotes.length} offene Hinweise</strong> vom Vormieter – bitte ansehen!</div>
+      </div>`;
+    } else {
+      nachEl.innerHTML = '';
+    }
+  }
+
+  // Wurde bei der letzten Abfahrt das Wasser abgestellt? (Checkliste der Buchung oder Alt-Protokoll)
+  const depCands = [
+    ...state.bookings.filter(b => b.end <= localDateStr() && b.checklist && Object.keys(b.checklist).length > 0)
+      .map(b => ({ date: b.end, wasser: !!b.checklist.wasser })),
+    ...state.departures.map(d => ({ date: d.date, wasser: !!(d.tasks || []).find(t => t.id === 'wasser' && t.done) }))
+  ].sort((a, b) => b.date.localeCompare(a.date));
+  const wasserAbgestellt = depCands.length > 0 && depCands[0].wasser;
+
+  // Build task list for a booking
+  function buildTasksForBooking(b) {
+    const days = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+    const tasks = [];
+
+    // Rasenbewässerung: einmal pro Aufenthalt
+    tasks.push({ text: '💧 Rasenbewässerung', type: 'garden' });
+
+    // Seasonal tasks assigned to this booking
+    const thisYear = new Date().getFullYear();
+    state.seasonalAssignments
+      .filter(a => a.bookingId === b.id && a.year === thisYear && !a.done)
+      .forEach(a => {
+        const t = TASKS.seasonal.find(t => t.id === a.taskId);
+        if(t) tasks.push({ text: t.text, type: 'seasonal' });
+      });
+
+    // Departure tasks (always)
+    REQUIRED_DEP.forEach(t => {
+      if(t.penalty > 0) tasks.push({ text: t.text.split('–')[0].trim(), type: 'depart' });
+    });
+
+    return tasks;
+  }
+
+  // Wechseltag ist Sonntag 17:00 Uhr: ein Aufenthalt läuft von Anreise 17:00 bis Abreise 17:00
+  const changeAt = ds => new Date(ds + 'T17:00:00');
+  const sortedBookings = state.bookings
+    .filter(b => changeAt(b.end) > today)
+    .sort((a,b) => a.start.localeCompare(b.start));
+
+  const currentBooking = sortedBookings.find(b => changeAt(b.start) <= today && changeAt(b.end) > today);
+  const nextBooking = sortedBookings.find(b => changeAt(b.start) > today);
+
+  const upEl = document.getElementById('dashboard-upcoming');
+
+  function renderBookingCard(b, label, badgeClass) {
+    const hh = state.households.find(h => h.id === b.householdId);
+    const days = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+    const tasks = buildTasksForBooking(b);
+
+    const typeColors = {
+      garden: 'background:#E1F5EE;color:#085041',
+      seasonal: 'background:#EEEDFE;color:#26215C',
+      depart: 'background:#FAEEDA;color:#633806',
+    };
+
+    const taskHtml = tasks.length > 0 ? `
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:2px">Aufgaben bei diesem Aufenthalt</div>
+        ${tasks.map(t => `
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:7px;font-size:0.82rem;${typeColors[t.type]}">
+            ${t.type === 'garden' ? '💧' : t.type === 'seasonal' ? '📋' : '✅'}
+            ${t.text}
+          </div>`).join('')}
+      </div>` : '';
+
+    // Waste collections during this stay
+    const abfallInStay = getAbfallInRange(b.start, b.end);
+    const abfallHtml = abfallInStay.length > 0 ? `
+      <div style="margin-top:10px;padding:10px 12px;background:var(--cream);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:6px">🗑 Mülltonnen in diesem Zeitraum</div>
+        ${abfallInStay.map(a => `
+          <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.83rem;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text-muted);min-width:90px">${fmtDate(a.date)}</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">${renderAbfallBadges(a.types)}</div>
+          </div>`).join('')}
+      </div>` : '';
+
+    const st = bookingStatus(b);
+    return `<div class="booking-item st-${st.level}" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div class="booking-color color-${hh?.color || 1}" style="min-height:40px;align-self:stretch"></div>
+        <div style="flex:1">
+          <div class="booking-name">${esc(hh?.name || 'Unbekannt')}</div>
+          <div class="booking-dates">${fmtDate(b.start)} – ${fmtDate(b.end)} · ${days} Tage · ${b.persons} Pers.</div>
+          <div class="booking-meta">
+            <span class="badge ${badgeClass}">${label}</span>
+            ${wasserAbgestellt && label !== 'Aktuell anwesend' ? '<span class="badge badge-red">⚠️ Wasser abgestellt!</span>' : ''}
+            ${b.exempt ? '<span class="badge badge-grey">🎟 Zahlungsbefreit</span>' : ''}
+            ${statusBadgeHtml(st)}
+          </div>
+        </div>
+      </div>
+      ${taskHtml}
+      ${abfallHtml}
+      <div style="margin-top:12px"><button type="button" class="btn btn-outline btn-sm" onclick="openBookingChecklist('${b.id}')">📋 Checkliste &amp; Protokoll</button></div>
+    </div>`;
+  }
+
+  if(!currentBooking && !nextBooking) {
+    upEl.innerHTML = '<div class="empty"><span class="empty-icon">📅</span>Keine bevorstehenden Buchungen</div>';
+  } else {
+    let html = '';
+    if(currentBooking) html += renderBookingCard(currentBooking, 'Aktuell anwesend', 'badge-green');
+    if(nextBooking) html += renderBookingCard(nextBooking, 'Nächster Aufenthalt', 'badge-grey');
+    upEl.innerHTML = html;
+  }
+
+  // Penalties
+  const pending = penaltyItems().filter(d => !d.paid);
+  const penEl = document.getElementById('dashboard-penalties');
+  if(pending.length === 0) {
+    penEl.innerHTML = '<div class="alert alert-info"><span>✅</span> Keine offenen Aufschläge</div>';
+  } else {
+    penEl.innerHTML = pending.map(d => {
+      const hh = state.households.find(h => h.id === d.householdId);
+      return `<div class="booking-item">
+        <div class="booking-info">
+          <div class="booking-name">${esc(hh?.name || 'Unbekannt')}</div>
+          <div class="booking-dates">Abfahrt: ${fmtDate(d.date)}</div>
+          <div class="booking-meta">
+            <span class="badge badge-red">Aufschlag: ${d.penalty} €</span>
+            <span style="font-size:0.78rem;color:var(--text-muted)">${esc(d.undone.join(', '))}</span>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm admin-only" onclick="markPenaltyPaid('${d.id}')">✓ Bezahlt</button>
+      </div>`;
+    }).join('');
+  }
+
+  // Rasen
+  renderRasen();
+  // Abfall
+  renderAbfall();
+}
+
+function renderAbfall() {
+  const el = document.getElementById('dashboard-abfall');
+  if(!el) return;
+  const today = new Date();
+  const todayStr = localDateStr(today);
+
+  // Get next 6 waste collection dates from today
+  const upcoming = ABFALL_2026.filter(a => a.date >= todayStr).slice(0, 6);
+
+  if(upcoming.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-size:0.9rem">Keine weiteren Termine hinterlegt (Abfallkalender nur für 2026).</div>';
+    return;
+  }
+
+  let html = '';
+  upcoming.forEach(a => {
+    const d = new Date(a.date + 'T12:00:00');
+    const dayName = d.toLocaleDateString('de-DE', { weekday:'long' });
+    const dateLabel = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' });
+    const isBooked = isBookedOn(a.date);
+
+    // Check if anyone is present to put out the bins
+    // Also check next upcoming collection after this one
+    let warningHtml = '';
+    if(!isBooked) {
+      // Is someone there the day before?
+      const dayBefore = new Date(d);
+      dayBefore.setDate(dayBefore.getDate() - 1);
+      const dayBeforeStr = localDateStr(dayBefore);
+      const bookedDayBefore = isBookedOn(dayBeforeStr);
+      if(!bookedDayBefore) {
+        // Find if someone is currently there and should put out bins early
+        const currentStay = state.bookings.find(b => b.end >= todayStr && b.end < a.date);
+        if(currentStay) {
+          const hh = state.households.find(h => h.id === currentStay.householdId);
+          warningHtml = `<div style="margin-top:5px;padding:5px 10px;background:#FAEEDA;border-radius:7px;font-size:0.8rem;color:#633806">
+            ⚠️ Niemand anwesend – bitte von <strong>${esc(hh?.name || '?')}</strong> vor Abreise rausstellen
+          </div>`;
+        } else {
+          warningHtml = `<div style="margin-top:5px;padding:5px 10px;background:#FAECE7;border-radius:7px;font-size:0.8rem;color:#712B13">
+            ⚠️ Niemand anwesend an diesem Termin
+          </div>`;
+        }
+      }
+    }
+
+    const presentBadge = isBooked
+      ? `<span style="font-size:0.75rem;background:var(--green-pale);color:var(--green);padding:2px 8px;border-radius:10px;font-weight:600">jemand anwesend ✓</span>`
+      : `<span style="font-size:0.75rem;background:var(--red-pale);color:var(--red);padding:2px 8px;border-radius:10px;font-weight:600">niemand anwesend</span>`;
+
+    html += `<div style="display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="min-width:110px">
+          <div style="font-weight:600;font-size:0.95rem;color:var(--text)">${dayName}, ${dateLabel}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${renderAbfallBadges(a.types)}</div>
+        ${presentBadge}
+      </div>
+      ${warningHtml}
+    </div>`;
+  });
+
+  // Remove last border
+  el.innerHTML = html;
+}
+
+function renderRasen() {
+  const el = document.getElementById('rasen-last');
+  const dEl = document.getElementById('rasen-days');
+  const bar = document.getElementById('rasen-bar');
+  if(!state.rasenLastMowed) {
+    el.textContent = 'Nicht erfasst';
+    dEl.textContent = '–';
+    bar.style.width = '0%';
+    bar.style.background = 'var(--border)';
+    return;
+  }
+  const days = Math.max(0, Math.round((new Date(localDateStr() + 'T12:00:00') - new Date(state.rasenLastMowed + 'T12:00:00')) / 86400000));
+  el.textContent = fmtDate(state.rasenLastMowed);
+  dEl.textContent = days + ' Tage';
+  const pct = Math.min(100, (days / 14) * 100);
+  bar.style.width = pct + '%';
+  bar.style.background = pct > 80 ? 'var(--red)' : pct > 50 ? 'var(--gold)' : 'var(--green)';
+  dEl.style.color = pct > 80 ? 'var(--red)' : pct > 50 ? 'var(--gold)' : 'var(--green)';
+}
+
+function setRasenDate() {
+  state.rasenLastMowed = localDateStr();
+  renderRasen();
+  scheduleSave();
+  alert('✅ Rasenmähen als erledigt markiert!');
+}
+
+// ======================================
+// CALENDAR
+// ======================================
+function getISOWeek(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+function renderCalendar() {
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+  const year = state.calYear, month = state.calMonth;
+  document.getElementById('cal-title').textContent = months[month] + ' ' + year;
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const offset = firstDay === 0 ? 6 : firstDay - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+
+  // Build thead
+  const thead = document.getElementById('cal-thead');
+  thead.innerHTML = `<tr>
+    <th class="cal-kw-header">KW</th>
+    <th class="cal-header">Mo</th>
+    <th class="cal-header">Di</th>
+    <th class="cal-header">Mi</th>
+    <th class="cal-header">Do</th>
+    <th class="cal-header">Fr</th>
+    <th class="cal-header" style="color:#2d4a2d">Sa</th>
+    <th class="cal-header" style="color:var(--gold);font-weight:800">So 🔄</th>
+  </tr>`;
+
+  // Build cells array (offset empties + days)
+  const cells = [];
+  for(let i = 0; i < offset; i++) cells.push(null);
+  for(let d = 1; d <= daysInMonth; d++) cells.push(d);
+  // pad to full weeks
+  while(cells.length % 7 !== 0) cells.push(null);
+
+  // Build rows
+  let tbodyHtml = '';
+  for(let r = 0; r < cells.length / 7; r++) {
+    const week = cells.slice(r*7, r*7+7);
+    // Get KW from first non-null day in row
+    const firstDay = week.find(d => d !== null);
+    const kwDate = firstDay ? new Date(year, month, firstDay) : null;
+    const kw = kwDate ? getISOWeek(kwDate) : '';
+
+    tbodyHtml += `<tr><td class="cal-kw-cell">KW ${kw}</td>`;
+    week.forEach((d, colIdx) => {
+      if(d === null) {
+        tbodyHtml += '<td class="cal-day empty-day"></td>';
+        return;
+      }
+      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isToday = today.getFullYear()===year && today.getMonth()===month && today.getDate()===d;
+      const isWeekend = colIdx >= 5;
+
+      const bookingsOnDay = state.bookings.filter(b => dateStr >= b.start && dateStr <= b.end);
+      const isBooked = bookingsOnDay.length > 0;
+
+      let cls = 'cal-day';
+      if(isToday) cls += ' today';
+      if(isBooked) cls += ' booked';
+
+      const numStyle = isWeekend ? (colIdx === 6 ? 'color:var(--gold);font-weight:800' : 'color:#2d4a2d') : '';
+      const sundayStyle = colIdx === 6 ? 'border:1.5px solid var(--gold-pale);' : '';
+
+      const chips = bookingsOnDay.map(b => {
+        const hh = state.households.find(h => h.id === b.householdId);
+        const stc = bookingStatus(b);
+        const bg = stc.level === 'bad' ? '#D85A30' : stc.level === 'warn' ? '#C98A10' : getColor(hh?.color||1);
+        const mark = stc.level === 'bad' ? '⛔ ' : stc.level === 'warn' ? '⏳ ' : '';
+        const tip = stc.missing.length && (stc.level === 'bad' || stc.level === 'warn') ? ' title="Es fehlt: ' + stc.missing.map(id => MISSING_LABEL[id]).join(', ') + '"' : '';
+        return `<span class="cal-booking-chip" style="background:${bg}"${tip}>${mark}${esc(hh?.name?.split(' ')[0] || '?')}</span>`;
+      }).join('');
+
+      // Waste collection on this day
+      const abfallTypes = ABFALL_MAP[dateStr] || [];
+      const abfallOnDay = abfallTypes.length > 0 ? [{date:dateStr, types:abfallTypes}] : [];
+      const abfallIcons = abfallOnDay.flatMap(a => {
+        const iconMap = { R:'⬛', B:'🟫', P:'🔷', G:'🟨', Rmo:'🔲', T:'🌲' };
+        const tipMap = { R:'Restabfall', B:'Biotonne', P:'Papiertonne', G:'Gelber Sack', Rmo:'Restabfall mtl.', T:'Tannenbaum' };
+        return a.types.map(t => `<span title="${tipMap[t]||t}" style="font-size:0.75rem">${iconMap[t]||'🗑'}</span>`);
+      }).join('');
+
+      const abfallBorder = abfallOnDay.length > 0 ? 'border-top:3px solid #BA7517;' : '';
+      const cellStyle = (sundayStyle + abfallBorder) || '';
+
+      tbodyHtml += `<td class="${cls}" style="${cellStyle}">
+        <span class="cal-day-num" style="${numStyle}">${d}</span>
+        ${chips}${requestChipsHtml(dateStr)}
+        ${abfallIcons ? `<div style="display:flex;gap:1px;flex-wrap:wrap;justify-content:center;margin-top:2px">${abfallIcons}</div>` : ''}
+      </td>`;
+    });
+    tbodyHtml += '</tr>';
+  }
+  document.getElementById('cal-tbody').innerHTML = tbodyHtml;
+
+  // Legend
+  const activHH = [...new Set(state.bookings.map(b => b.householdId))];
+  const legEl = document.getElementById('cal-legend');
+  if(activHH.length > 0) {
+    legEl.innerHTML = activHH.map(id => {
+      const hh = state.households.find(h => h.id === id);
+      return `<div class="cal-legend-item">
+        <div class="cal-legend-dot" style="background:${getColor(hh?.color||1)}"></div>
+        ${esc(hh?.name || '?')}
+      </div>`;
+    }).join('') + `<div class="cal-legend-item">
+      <div class="cal-legend-dot" style="background:var(--gold);"></div>
+      Heute
+    </div>`;
+    legEl.style.display = 'flex';
+  } else {
+    legEl.style.display = 'none';
+  }
+
+  renderBookingsList();
+}
+
+function calPrev() {
+  if(state.calMonth === 0) { state.calMonth = 11; state.calYear--; }
+  else state.calMonth--;
+  renderCalendar();
+}
+function calNext() {
+  if(state.calMonth === 11) { state.calMonth = 0; state.calYear++; }
+  else state.calMonth++;
+  renderCalendar();
+}
+
+function openBookingModal(reqId) {
+  if(!requireAdmin()) return;
+  const sel = document.getElementById('book-household');
+  sel.innerHTML = sortedHH().map(h => `<option value="${h.id}">${esc(h.name)}</option>`).join('');
+  if(state.households.length === 0) {
+    alert('Bitte zuerst Haushalte unter "Haushalte" anlegen.');
+    return;
+  }
+  _pendingRequestId = null;
+  const rq = reqId ? state.requests.find(x => x.id === reqId) : null;
+  if(rq) { _pendingRequestId = rq.id; sel.value = rq.householdId; }
+  document.getElementById('book-start').value = rq ? rq.start : '';
+  document.getElementById('book-end').value = rq ? rq.end : '';
+  document.getElementById('book-extra-persons').value = '0';
+  document.getElementById('book-notes').value = rq ? rq.notes : '';
+  document.getElementById('book-cost-preview').style.display = 'none';
+  const bTitle = document.querySelector('#modal-booking .modal-title');
+  if(bTitle) bTitle.textContent = rq ? '✅ Buchungsanfrage als Buchung festlegen' : '📅 Neue Buchung';
+  updateBookingPersons();
+  openModal('modal-booking');
+}
+
+function updateBookingPersons() {
+  const sel = document.getElementById('book-household');
+  const hh = state.households.find(h => h.id === sel?.value);
+  const exemptPersons = hh?.exemptPersons || [];
+  const container = document.getElementById('book-exempt-persons');
+  const checkboxes = document.getElementById('book-exempt-checkboxes');
+
+  if(exemptPersons.length > 0) {
+    container.style.display = 'block';
+    checkboxes.innerHTML = exemptPersons.map((name, i) => `
+      <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:0.95rem;font-weight:500">
+        <input type="checkbox" id="book-exempt-cb-${i}" value="${esc(name)}" onchange="updateBookCostPreview()"
+          style="width:22px;height:22px;cursor:pointer;accent-color:var(--green)">
+        <span>${esc(name)}</span>
+        <span class="badge badge-green" style="margin-left:auto;font-size:0.72rem">🎟 Befreit</span>
+      </label>`).join('');
+  } else {
+    container.style.display = 'none';
+    checkboxes.innerHTML = '';
+  }
+  updateBookCostPreview();
+}
+
+function getCheckedExemptPersons() {
+  const checked = [];
+  document.querySelectorAll('[id^="book-exempt-cb-"]:checked').forEach(cb => {
+    checked.push(cb.value);
+  });
+  return checked;
+}
+
+function updateBookCostPreview() {
+  const sel = document.getElementById('book-household');
+  const hh = state.households.find(h => h.id === sel?.value);
+  const checkedExempt = getCheckedExemptPersons();
+  const extraPersons = parseInt(document.getElementById('book-extra-persons').value) || 0;
+  const totalPersons = checkedExempt.length + extraPersons;
+  const start = document.getElementById('book-start').value;
+  const end = document.getElementById('book-end').value;
+  const el = document.getElementById('book-cost-preview');
+
+  if(start && end && totalPersons > 0) {
+    const days = Math.round((new Date(end) - new Date(start)) / 86400000);
+    if(days > 0) {
+      const cost = extraPersons * days * 10;
+      el.style.display = 'flex';
+      if(checkedExempt.length > 0 && extraPersons > 0) {
+        el.innerHTML = `<span>💶</span> <strong>${esc(checkedExempt.join(', '))}</strong> befreit + ${extraPersons} zahlend × ${days} Tage × 10 € = <strong>${cost} €</strong>`;
+      } else if(checkedExempt.length > 0) {
+        el.innerHTML = `<span>🎟</span> Nur befreite Personen – <strong>0 €</strong>`;
+      } else {
+        el.innerHTML = `<span>💶</span> ${extraPersons} Personen × ${days} Tage × 10 € = <strong>${cost} €</strong>`;
+      }
+    }
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function updateExemptInfo() { updateBookingPersons(); }
+
+// Prüft Überschneidungen und Wechseltag (Sonntag). Gibt false zurück, wenn der Nutzer abbricht.
+function validateBookingDates(start, end, ignoreId) {
+  const overlap = state.bookings.find(o => o.id !== ignoreId && start < o.end && end > o.start);
+  if(overlap) {
+    const hh = state.households.find(h => h.id === overlap.householdId);
+    if(!confirm(`Der Zeitraum überschneidet sich mit der Buchung von ${hh?.name || 'einem anderen Haushalt'} (${fmtDate(overlap.start)} – ${fmtDate(overlap.end)}).\n\nTrotzdem speichern?`)) return false;
+  }
+  const notSunday = [start, end].some(d => new Date(d + 'T12:00:00').getDay() !== 0);
+  if(notSunday && !confirm('Wechseltag ist normalerweise Sonntag. Anreise oder Abreise liegt nicht auf einem Sonntag.\n\nTrotzdem speichern?')) return false;
+  return true;
+}
+
+async function saveBooking() {
+  const householdId = document.getElementById('book-household').value;
+  const start = document.getElementById('book-start').value;
+  const end = document.getElementById('book-end').value;
+  const extraPersons = parseInt(document.getElementById('book-extra-persons').value) || 0;
+  const checkedExempt = getCheckedExemptPersons();
+  const notes = document.getElementById('book-notes').value;
+  const totalPersons = checkedExempt.length + extraPersons;
+
+  if(!householdId || !start || !end) { alert('Bitte alle Pflichtfelder ausfüllen.'); return; }
+  if(new Date(end) <= new Date(start)) { alert('Abreise muss nach Anreise sein.'); return; }
+  if(totalPersons < 1) { alert('Bitte mindestens eine Person angeben.'); return; }
+  if(!validateBookingDates(start, end, null)) return;
+
+  // Wird eine Anfrage festgelegt, verschwindet sie und mit ihr alle Anfragen, die sich mit dem Zeitraum überschneiden
+  let dropReq = [];
+  if(_pendingRequestId) {
+    dropReq = state.requests.filter(r => r.id === _pendingRequestId || (start < r.end && end > r.start));
+    const others = dropReq.filter(r => r.id !== _pendingRequestId);
+    if(others.length && !confirm('Diese Anfragen für denselben Zeitraum werden gelöscht:\n\n' + others.map(r => '• ' + hhName(r.householdId) + ' (' + fmtDate(r.start) + ' – ' + fmtDate(r.end) + ')').join('\n') + '\n\nFortfahren?')) return;
+  }
+
+  state.bookings.push({
+    id: Date.now().toString(),
+    householdId, start, end,
+    persons: totalPersons,
+    extraPersons,
+    exemptPersons: checkedExempt,
+    notes
+  });
+  if(dropReq.length) { const drop = new Set(dropReq.map(r => r.id)); state.requests = state.requests.filter(r => !drop.has(r.id)); }
+  _pendingRequestId = null;
+  await save();
+  closeModal('modal-booking');
+  renderCalendar();
+  renderDashboard();
+}
+
+async function deleteBooking(id) {
+  if(!requireAdmin()) return;
+  if(!confirm('Buchung wirklich löschen?')) return;
+  state.bookings = state.bookings.filter(b => b.id !== id);
+  await save();
+  renderCalendar();
+  renderDashboard();
+}
+
+function toggleBookingPaid(id) {
+  if(!requireAdmin()) return;
+  const b = state.bookings.find(b => b.id === id);
+  if(!b) return;
+  if(!confirm(b.paid ? 'Zahlung wieder als offen markieren?' : 'Als bezahlt markieren?')) return;
+  b.paid = !b.paid;
+  renderCalendar();
+  renderCosts();
+  scheduleSave();
+}
+
+function editBooking(id) {
+  if(!requireAdmin()) return;
+  const b = state.bookings.find(b => b.id === id);
+  if(!b) return;
+
+  document.getElementById('edit-booking-id').value = id;
+
+  // Fill household select
+  const sel = document.getElementById('edit-book-household');
+  sel.innerHTML = sortedHH().map(h => `<option value="${h.id}" ${h.id === b.householdId ? 'selected' : ''}>${esc(h.name)}</option>`).join('');
+
+  document.getElementById('edit-book-start').value = b.start;
+  document.getElementById('edit-book-end').value = b.end;
+  document.getElementById('edit-extra-persons').value = b.extraPersons || 0;
+  document.getElementById('edit-book-notes').value = b.notes || '';
+
+  // Show exempt person checkboxes
+  updateEditExemptPersons(b);
+  sel.onchange = () => updateEditExemptPersons(b);
+
+  openModal('modal-edit-booking');
+}
+
+function updateEditExemptPersons(b) {
+  const sel = document.getElementById('edit-book-household');
+  const hh = state.households.find(h => h.id === sel.value);
+  const exemptPersons = hh?.exemptPersons || [];
+  const container = document.getElementById('edit-exempt-persons');
+  const checkboxes = document.getElementById('edit-exempt-checkboxes');
+
+  if(exemptPersons.length > 0) {
+    container.style.display = 'block';
+    checkboxes.innerHTML = exemptPersons.map((name, i) => `
+      <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:0.95rem;font-weight:500">
+        <input type="checkbox" id="edit-exempt-cb-${i}" value="${esc(name)}"
+          ${b.exemptPersons?.includes(name) ? 'checked' : ''}
+          style="width:22px;height:22px;cursor:pointer;accent-color:var(--green)">
+        <span>${esc(name)}</span>
+        <span class="badge badge-green" style="margin-left:auto;font-size:0.72rem">🎟 Befreit</span>
+      </label>`).join('');
+  } else {
+    container.style.display = 'none';
+    checkboxes.innerHTML = '';
+  }
+}
+
+async function saveEditBooking() {
+  const id = document.getElementById('edit-booking-id').value;
+  const b = state.bookings.find(b => b.id === id);
+  if(!b) return;
+
+  const newStart = document.getElementById('edit-book-start').value;
+  const newEnd = document.getElementById('edit-book-end').value;
+  if(!newStart || !newEnd) { alert('Bitte alle Pflichtfelder ausfüllen.'); return; }
+  if(newEnd <= newStart) { alert('Abreise muss nach Anreise sein.'); return; }
+  if(!validateBookingDates(newStart, newEnd, id)) return;
+
+  const checkedExempt = [];
+  document.querySelectorAll('[id^="edit-exempt-cb-"]:checked').forEach(cb => checkedExempt.push(cb.value));
+
+  b.householdId = document.getElementById('edit-book-household').value;
+  b.start = document.getElementById('edit-book-start').value;
+  b.end = document.getElementById('edit-book-end').value;
+  b.extraPersons = parseInt(document.getElementById('edit-extra-persons').value) || 0;
+  b.exemptPersons = checkedExempt;
+  b.persons = b.extraPersons + checkedExempt.length;
+  b.notes = document.getElementById('edit-book-notes').value;
+
+  await save();
+  closeModal('modal-edit-booking');
+  renderCalendar();
+  renderDashboard();
+  renderCosts();
+}
+
+// ======================================
+// TASKS
+// ======================================
+function renderTasks() {
+  const days = parseInt(document.getElementById('stay-days')?.value) || 7;
+  renderTaskGroup('tasks-garden', TASKS.garden, days);
+  renderTaskGroup('tasks-house', TASKS.house, days);
+  renderSeasonalTasks();
+  renderCustomTasks();
+}
+
+function renderCustomTasks() {
+  const el = document.getElementById('tasks-custom');
+  if(!el) return;
+  const thisYear = new Date().getFullYear();
+  const tasks = (state.customTasks || []).filter(t => t.year === thisYear);
+  if(tasks.length === 0) {
+    el.innerHTML = '<div style="color:var(--text-muted);font-size:0.88rem;padding:8px 0">Noch keine eigenen Aufgaben für dieses Jahr.</div>';
+    return;
+  }
+  el.innerHTML = tasks.map(t => `
+    <div class="task-item ${t.done ? 'done' : ''}" id="ctask-${t.id}">
+      <div class="task-checkbox" onclick="toggleCustomTask('${t.id}')">${t.done ? '✓' : ''}</div>
+      <div class="task-text">${esc(t.text)}</div>
+      <button type="button" class="btn btn-outline btn-sm" onclick="deleteCustomTask('${t.id}')" style="padding:4px 8px;font-size:0.75rem">🗑</button>
+    </div>`).join('');
+}
+
+function openCustomTaskModal() {
+  document.getElementById('custom-task-text').value = '';
+  openModal('modal-custom-task');
+}
+
+async function saveCustomTask() {
+  const text = document.getElementById('custom-task-text').value.trim();
+  if(!text) { alert('Bitte eine Aufgabe eingeben.'); return; }
+  if(!state.customTasks) state.customTasks = [];
+  state.customTasks.push({ id: Date.now().toString(), text, year: new Date().getFullYear(), done: false });
+  await save();
+  closeModal('modal-custom-task');
+  renderCustomTasks();
+}
+
+function toggleCustomTask(id) {
+  const t = (state.customTasks || []).find(t => t.id === id);
+  if(!t) return;
+  t.done = !t.done;
+  scheduleSave();
+  renderCustomTasks();
+}
+
+async function deleteCustomTask(id) {
+  if(!confirm('Aufgabe löschen?')) return;
+  state.customTasks = (state.customTasks || []).filter(t => t.id !== id);
+  await save();
+  renderCustomTasks();
+}
+
+function renderTaskGroup(elId, tasks, stayDays) {
+  const el = document.getElementById(elId);
+  if(!el) return;
+  let html = '';
+  tasks.forEach(t => {
+    if(t.repeating && t.interval) {
+      // Show once per interval within stay
+      const count = Math.floor(stayDays / t.interval);
+      if(count < 1) {
+        html += `<div class="task-item">
+          <div class="task-checkbox"></div>
+          <div class="task-text">${t.text}</div>
+          <div class="task-freq">${t.freq} <span style="color:var(--text-muted);font-size:0.72rem">(bei ${stayDays} Tagen: nicht fällig)</span></div>
+        </div>`;
+        return;
+      }
+      for(let i = 1; i <= count; i++) {
+        const key = t.id + '_' + i;
+        const done = !!state.tasksDone[key];
+        html += `<div class="task-item ${done ? 'done' : ''}" id="task-${key}">
+          <div class="task-checkbox" onclick="toggleTask('${key}')">${done ? '✓' : ''}</div>
+          <div class="task-text">${t.text} <span style="color:var(--text-muted);font-size:0.78rem">(Tag ${i * t.interval})</span></div>
+          <div class="task-freq">${t.freq}</div>
+        </div>`;
+      }
+    } else {
+      const done = !!state.tasksDone[t.id];
+      html += `<div class="task-item ${done ? 'done' : ''}" id="task-${t.id}">
+        <div class="task-checkbox" onclick="toggleTask('${t.id}')">${done ? '✓' : ''}</div>
+        <div class="task-text">${t.text}</div>
+        <div class="task-freq">${t.freq}</div>
+      </div>`;
+    }
+  });
+  el.innerHTML = html;
+}
+
+function renderSeasonalTasks() {
+  const el = document.getElementById('tasks-seasonal');
+  const thisYear = new Date().getFullYear();
+
+  // Scoreboard: count completed seasonal assignments per household (all time)
+  const scoreAll = {};
+  const scoreYear = {};
+  state.households.forEach(h => { scoreAll[h.id] = 0; scoreYear[h.id] = 0; });
+  state.seasonalAssignments.forEach(a => {
+    if(a.done) {
+      if(scoreAll[a.householdId] !== undefined) scoreAll[a.householdId]++;
+      if(a.year === thisYear && scoreYear[a.householdId] !== undefined) scoreYear[a.householdId]++;
+    }
+  });
+
+  // Winner of this year
+  let winnerHtml = '';
+  if(state.households.length > 0) {
+    const sorted = [...state.households].sort((a,b) => (scoreYear[b.id]||0) - (scoreYear[a.id]||0));
+    const topScore = scoreYear[sorted[0].id] || 0;
+    const winners = sorted.filter(h => (scoreYear[h.id]||0) === topScore && topScore > 0);
+    if(winners.length > 0) {
+      winnerHtml = `<div class="alert alert-info" style="margin-bottom:16px">
+        🏆 <strong>Jahresführung ${thisYear}:</strong> ${esc(winners.map(w => w.name).join(', '))}
+        mit ${topScore} Aufgabe(n) – bei Jahresende: <strong>200 € Gutschein für Schimmels in Wustrow</strong> 🎉
+      </div>`;
+    }
+  }
+
+  // Scoreboard table
+  let scoreHtml = '';
+  if(state.households.length > 0) {
+    const rows = [...sortedHH()]
+      .sort((a,b) => (scoreYear[b.id]||0) - (scoreYear[a.id]||0))
+      .map((h, i) => {
+        const medal = i === 0 && (scoreYear[h.id]||0) > 0 ? '🥇 ' : i === 1 && (scoreYear[h.id]||0) > 0 ? '🥈 ' : i === 2 && (scoreYear[h.id]||0) > 0 ? '🥉 ' : '';
+        return `<tr>
+          <td>${medal}<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${getColor(h.color)};margin-right:6px;vertical-align:middle"></span>${esc(h.name)}</td>
+          <td style="text-align:center;font-weight:700;color:var(--green)">${scoreYear[h.id]||0}</td>
+          <td style="text-align:center;color:var(--text-muted)">${scoreAll[h.id]||0}</td>
+        </tr>`;
+      }).join('');
+    scoreHtml = `<div style="margin-bottom:20px">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px">🏆 Punktestand Saisonaufgaben</div>
+      <div class="scrollable"><table>
+        <tr><th>Haushalt</th><th style="text-align:center">${thisYear}</th><th style="text-align:center">Gesamt</th></tr>
+        ${rows}
+      </table></div>
+    </div>`;
+  }
+
+  // Task list with assignment
+  const taskHtml = TASKS.seasonal.map(t => {
+    const assignments = state.seasonalAssignments.filter(a => a.taskId === t.id && a.year === thisYear);
+    const assignedIds = assignments.map(a => a.householdId);
+    const isDone = assignments.some(a => a.done);
+
+    // Multi-household checkboxes
+    const hhCheckboxes = sortedHH().map(h => {
+      const checked = assignedIds.includes(h.id);
+      return `<label style="display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;cursor:pointer;padding:3px 8px;border-radius:6px;background:${checked ? getColor(h.color) : '#eef0f4'};color:${checked ? 'white' : 'var(--text)'};transition:all 0.15s">
+        <input type="checkbox" style="display:none" ${checked ? 'checked' : ''} onchange="toggleSeasonalHH('${t.id}', '${h.id}', this.checked)">
+        ${esc(h.name.split(' ')[0])}
+      </label>`;
+    }).join('');
+
+    const selectedBookingId = (assignments.find(a => a.bookingId) || {}).bookingId || '';
+    const bookingOptions = state.bookings
+      .map(b => `<option value="${b.id}" ${b.id === selectedBookingId ? 'selected' : ''}>${esc(state.households.find(h=>h.id===b.householdId)?.name||'?')}: ${fmtDate(b.start)}–${fmtDate(b.end)}</option>`).join('');
+
+    return `<div class="task-item ${isDone ? 'done' : ''}" style="flex-wrap:wrap;gap:10px;align-items:flex-start">
+      <div style="display:flex;align-items:flex-start;gap:10px;flex:1;min-width:200px">
+        <div class="task-checkbox" onclick="toggleSeasonalDone('${t.id}')" style="margin-top:2px">${isDone ? '✓' : ''}</div>
+        <div>
+          <div class="task-text">${t.text}</div>
+          <div class="task-freq">${t.freq}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        ${hhCheckboxes}
+        <select style="font-size:0.8rem;padding:5px 8px;min-width:160px" onchange="assignSeasonalBooking('${t.id}', this.value)">
+          <option value="">– Buchungszeitraum –</option>
+          ${bookingOptions}
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = winnerHtml + scoreHtml + taskHtml;
+}
+
+async function toggleSeasonalHH(taskId, householdId, checked) {
+  const thisYear = new Date().getFullYear();
+  if(checked) {
+    // Add assignment for this household if not exists
+    const exists = state.seasonalAssignments.find(a => a.taskId === taskId && a.year === thisYear && a.householdId === householdId);
+    if(!exists) {
+      state.seasonalAssignments.push({ id: Date.now().toString(), taskId, householdId, bookingId: null, year: thisYear, done: false });
+    }
+  } else {
+    // Remove assignment for this household
+    state.seasonalAssignments = state.seasonalAssignments.filter(
+      a => !(a.taskId === taskId && a.year === thisYear && a.householdId === householdId)
+    );
+  }
+  await save();
+  renderSeasonalTasks();
+}
+
+async function assignSeasonalBooking(taskId, bookingId) {
+  const thisYear = new Date().getFullYear();
+  const list = state.seasonalAssignments.filter(a => a.taskId === taskId && a.year === thisYear);
+  if(!bookingId) {
+    list.forEach(a => { a.bookingId = null; });
+  } else {
+    const booking = state.bookings.find(b => b.id === bookingId);
+    if(!booking) return;
+    // Aufgabe dem Haushalt dieser Buchung zuordnen (legt die Zuordnung an, falls noch nicht vorhanden)
+    let a = list.find(x => x.householdId === booking.householdId);
+    if(!a) {
+      a = { id: Date.now().toString(), taskId, householdId: booking.householdId, bookingId: null, year: thisYear, done: false };
+      state.seasonalAssignments.push(a);
+    }
+    a.bookingId = bookingId;
+  }
+  await save();
+  renderSeasonalTasks();
+}
+
+async function toggleSeasonalDone(taskId) {
+  const thisYear = new Date().getFullYear();
+  const assignments = state.seasonalAssignments.filter(a => a.taskId === taskId && a.year === thisYear);
+  if(assignments.length === 0) { alert('Bitte zuerst mindestens einen Haushalt zuordnen.'); return; }
+  const allDone = assignments.every(a => a.done);
+  assignments.forEach(a => { a.done = !allDone; });
+  await save();
+  renderSeasonalTasks();
+}
+
+function toggleTask(id) {
+  state.tasksDone[id] = !state.tasksDone[id];
+  scheduleSave();
+  const item = document.getElementById('task-' + id);
+  if(item) {
+    item.classList.toggle('done');
+    const cb = item.querySelector('.task-checkbox');
+    cb.textContent = state.tasksDone[id] ? '✓' : '';
+  }
+}
+
+// ======================================
+// PFLICHT-CHECKLISTE JE BUCHUNG · PROTOKOLL · RASENMÄHER-MAIL
+// ======================================
+// Jede Buchung (Abreise ab CHECKLIST_AB) braucht: Rasen gemäht (mit Foto) und Foto der Kurtaxe-Anmeldung.
+// Fehlt das, wird die Buchung ab 2 Tage vor Abreise gelb und nach Ende rot.
+// Am Tag nach der Abreise wird der Rasenmäher beauftragt, falls nicht gemäht wurde (Mail-Vorlage, Versand von Hand).
+const CHECKLIST_AB = '2026-09-20';       // ältere Buchungen sind Altbestand und werden nicht bewertet
+const MANDATORY = ['rasen', 'kurtaxe'];
+const MOWER_PRICE = 45;
+// false: Wird die Abfahrt nicht gemeldet, entsteht nur der Rasen-Aufschlag (Mäher). Die übrigen Aufschläge
+// (Haus, Müll, Kühlschrank) gelten nur, wenn die Gäste die Abfahrt melden. true: alle Aufschläge immer.
+const PENALTIES_WITHOUT_REPORT = false;
+const MISSING_LABEL = { rasen: 'Rasen mähen (mit Foto)', kurtaxe: 'Foto der Kurtaxe-Anmeldung' };
+const openPanels = new Set();
+let depSelectedId = null;
+let _statusSig = '';
+
+function addDaysStr(ds, n) {
+  const d = new Date(ds + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  return localDateStr(d);
+}
+function nowStamp() {
+  const d = new Date();
+  return localDateStr(d) + 'T' + [d.getHours(), d.getMinutes(), d.getSeconds()].map(x => String(x).padStart(2, '0')).join(':');
+}
+function bookingStartAt(b) { return new Date(b.start + 'T17:00:00'); }
+function bookingEndAt(b) { return new Date(b.end + 'T17:00:00'); }
+function isChecklistBooking(b) { return b.end >= CHECKLIST_AB; }
+function hhName(id) { const h = state.households.find(x => x.id === id); return h ? h.name : 'Unbekannt'; }
+
+function taskDone(b, id) {
+  const t = REQUIRED_DEP.find(x => x.id === id);
+  const done = !!(b.checklist && b.checklist[id]);
+  if (!t || !t.photo) return done;
+  return done && !!(b.photos && b.photos[id]);
+}
+function missingMandatory(b) { return MANDATORY.filter(id => !taskDone(b, id)); }
+
+// Ampel: legacy (Altbestand) · ok (grün) · neutral · warn (gelb, ab 2 Tage vor Abreise) · bad (rot, nach Ende)
+function bookingStatus(b, now = new Date()) {
+  if (!isChecklistBooking(b)) return { level: 'legacy', missing: [] };
+  const missing = missingMandatory(b);
+  if (missing.length === 0) return { level: 'ok', missing };
+  let level = 'neutral';
+  const warnFrom = new Date(addDaysStr(b.end, -2) + 'T00:00:00');
+  if (now >= bookingEndAt(b) || (b.protocol && !b.protocol.legacy)) level = 'bad';
+  else if (now >= warnFrom && now >= new Date(b.start + 'T00:00:00')) level = 'warn';
+  return { level, missing };
+}
+function statusBadgeHtml(st) {
+  const list = st.missing.map(id => MISSING_LABEL[id]).join(', ');
+  if (st.level === 'bad') return `<span class="badge badge-red">⛔ Es fehlt: ${esc(list)}</span>`;
+  if (st.level === 'warn') return `<span class="badge badge-gold">⏳ Noch offen: ${esc(list)}</span>`;
+  if (st.level === 'ok') return '<span class="badge badge-green">✅ Rasen &amp; Kurtaxe erledigt</span>';
+  if (st.level === 'neutral') return '<span class="badge badge-grey">Pflicht: Rasen + Kurtaxe-Foto</span>';
+  return '';
+}
+function statusText(b, st) {
+  const list = st.missing.map(id => MISSING_LABEL[id]).join(' und ');
+  const mower = st.missing.includes('rasen')
+    ? ` Wird der Rasen nicht gemäht, wird der Rasenmäher am Tag nach der Abreise automatisch beauftragt (${MOWER_PRICE} € Aufschlag).` : '';
+  if (st.level === 'legacy') return 'Diese Buchung liegt vor Einführung der Pflicht-Checkliste.';
+  if (st.level === 'ok') return 'Rasen gemäht und Kurtaxe-Foto sind hinterlegt – alle Pflichtaufgaben erledigt.';
+  if (st.level === 'bad') return `<strong>Es fehlt noch: ${esc(list)}.</strong>${mower}`;
+  if (st.level === 'warn') return `<strong>Bald Abreise (${fmtDate(b.end)}):</strong> bitte noch erledigen: ${esc(list)}.${mower}`;
+  return `Pflicht bei jeder Buchung: Rasen mähen (mit Foto) und Foto der Kurtaxe-Anmeldung hochladen. Fehlt das, wird die Buchung ab 2 Tage vor Abreise gelb und nach dem Ende rot.${mower}`;
+}
+
+// ---- Aufschläge (an der Buchung) ----
+function bookingUndone(b) {
+  const p = b.protocol;
+  if (!p) return [];
+  if (p.legacy) return p.undone.map(x => ({ id: '', short: x, penalty: 0 }));
+  return REQUIRED_DEP.filter(t => t.penalty > 0)
+    .filter(t => (p.manual || PENALTIES_WITHOUT_REPORT || t.id === 'rasen'))
+    .filter(t => (t.id === 'rasen' && p.mowerOrderedAt) ? true : !taskDone(b, t.id))
+    .map(t => ({ id: t.id, short: t.text.split('(')[0].split('–')[0].trim(), penalty: t.penalty }));
+}
+function bookingPenalty(b) {
+  const p = b.protocol;
+  if (!p) return 0;
+  if (p.legacy) return p.penalty;
+  return bookingUndone(b).reduce((s, t) => s + t.penalty, 0);
+}
+// Einheitliche Liste aller Aufschläge (neue Buchungsprotokolle + nicht zuordenbare Alt-Abfahrten)
+function penaltyItems() {
+  const items = [];
+  state.bookings.forEach(b => {
+    if (!b.protocol) return;
+    const pen = bookingPenalty(b);
+    if (pen > 0) items.push({ kind: 'booking', id: b.id, householdId: b.householdId, date: b.end, undone: bookingUndone(b).map(t => t.short), penalty: pen, paid: !!b.protocol.paid });
+  });
+  state.departures.forEach(d => {
+    if (d.penalty > 0) items.push({ kind: 'legacy', id: d.id, householdId: d.householdId, date: d.date, undone: d.undone, penalty: d.penalty, paid: !!d.paid });
+  });
+  return items;
+}
+async function markPenaltyPaid(id) {
+  if(!requireAdmin()) return;
+  const b = state.bookings.find(x => x.id === id && x.protocol);
+  if (b) b.protocol.paid = true;
+  else { const d = state.departures.find(x => x.id === id); if (d) d.paid = true; else return; }
+  save();
+  renderCurrentSection();
+}
+
+// ---- Rasenmäher-Beauftragung (Mail-Vorlage, Versand von Hand am Tag nach der Abreise) ----
+function mowerDue(b) {
+  return isChecklistBooking(b) && localDateStr() >= addDaysStr(b.end, 1) && !taskDone(b, 'rasen') && !(b.protocol && b.protocol.mowerOrderedAt);
+}
+function mowerMailHref(b) {
+  const s = state.settings || {};
+  const subject = 'Rasenmähen Ferienhaus' + (s.houseAddress ? ' – ' + s.houseAddress : '');
+  const body = [
+    'Guten Tag' + (s.mowerName ? ' ' + s.mowerName : '') + ',',
+    '',
+    'bitte mähen Sie den Rasen am Ferienhaus' + (s.houseAddress ? ' (' + s.houseAddress + ')' : '') + '.',
+    b ? 'Der letzte Aufenthalt endete am ' + fmtDate(b.end) + '.' : '',
+    'Bitte melden Sie sich kurz mit einem Termin und senden Sie uns die Rechnung.',
+    '',
+    'Vielen Dank und freundliche Grüße'
+  ].filter((l, i, a) => !(l === '' && (i === 0 || a[i - 1] === ''))).join('\n');
+  return 'mailto:' + (s.mowerEmail || '') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+function mowerMailClick(bid) {
+  const b = bid ? state.bookings.find(x => x.id === bid) : null;
+  if (!(state.settings && state.settings.mowerEmail)) alert('Hinweis: Es ist noch keine E-Mail-Adresse des Rasenmähers hinterlegt (Reiter „Haushalte“ → „Rasenmäher & Haus“). Die Mail wird ohne Empfänger vorbereitet.');
+  const a = document.createElement('a');
+  a.href = mowerMailHref(b);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+async function markMowerOrdered(bid) {
+  if(!requireAdmin()) return;
+  const b = state.bookings.find(x => x.id === bid);
+  if (!b) return;
+  if (!confirm(`Ist die Mail an den Rasenmäher raus?\n\nDann wird die Beauftragung vermerkt und ${MOWER_PRICE} € als Ausgabe (Kategorie Mäher) gebucht.`)) return;
+  if (!b.protocol) b.protocol = { finalizedAt: nowStamp(), manual: false, paid: false, legacy: false, penalty: 0, undone: [], mowerOrderedAt: null };
+  b.protocol.mowerOrderedAt = nowStamp();
+  const expId = 'mower_' + b.id;
+  if (!state.expenses.some(e => e.id === expId)) {
+    state.expenses.push({ id: expId, desc: 'Externer Mäher – ' + hhName(b.householdId) + ', Abreise ' + fmtDate(b.end), amount: MOWER_PRICE, date: localDateStr(), cat: 'Mäher', receipt: null });
+  }
+  await save();
+  rerenderBookingViews();
+}
+async function orderMower() {
+  if(!requireAdmin()) return;
+  mowerMailClick(null);
+  if (confirm('Mail-Vorlage geöffnet.\n\nWurde der Rasenmäher beauftragt? Dann ' + MOWER_PRICE + ' € als Ausgabe buchen.')) {
+    state.expenses.push({ id: Date.now().toString(), desc: 'Externer Mäher (Beauftragung)', amount: MOWER_PRICE, date: localDateStr(), cat: 'Mäher' });
+    await save();
+    alert('Ausgabe von ' + MOWER_PRICE + ' € gebucht.');
+    renderDashboard();
+  }
+}
+
+// ---- Checkliste und Protokoll (Darstellung) ----
+function taskRowHtml(b, t) {
+  const cl = b.checklist || {}, ph = b.photos || {};
+  const done = !!cl[t.id];
+  const mand = MANDATORY.includes(t.id) && isChecklistBooking(b);
+  let photoUi = '';
+  if (t.photo) {
+    photoUi = ph[t.id]
+      ? `<div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+           <img src="${safeImg(ph[t.id])}" alt="Foto" style="height:60px;border-radius:6px;border:1px solid var(--border);object-fit:cover;max-width:100px;cursor:pointer" onclick="showReceiptFull(this.src)">
+           <span class="badge badge-green">Foto hochgeladen ✅</span>
+           <button type="button" class="btn btn-outline btn-sm" onclick="removeBookingPhoto('${b.id}','${t.id}')">✕ Entfernen</button>
+         </div>`
+      : `<div style="margin-top:8px">
+           <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:0.82rem;color:#1a2320;font-weight:600;background:#eef0f4;padding:7px 12px;border-radius:7px;border:1.5px dashed var(--border)">
+             📷 Foto als Nachweis hochladen
+             <input type="file" accept="image/*" style="display:none" onchange="handleBookingPhoto(this,'${b.id}','${t.id}')">
+           </label>${mand ? '<span style="font-size:0.75rem;color:var(--red);margin-left:8px">⚠️ Pflicht</span>' : ''}
+         </div>`;
+  }
+  return `<div class="task-item ${done ? 'done' : ''}" style="flex-direction:column;align-items:flex-start">
+    <div style="display:flex;align-items:flex-start;gap:10px;width:100%">
+      <div class="task-checkbox" onclick="toggleBookingTask('${b.id}','${t.id}')" style="margin-top:2px">${done ? '✓' : ''}</div>
+      <div style="flex:1">
+        <div class="task-text">${t.text}</div>
+        ${mand ? '<span class="badge badge-gold" style="font-size:0.68rem">Pflicht</span> ' : ''}${t.penalty > 0 ? `<span style="color:var(--red);font-size:0.78rem">Aufschlag bei Nicht-Erledigung: ${t.penalty} €</span>` : ''}
+      </div>
+    </div>
+    ${photoUi}
+  </div>`;
+}
+
+function protocolBlockHtml(b) {
+  const p = b.protocol;
+  const pen = bookingPenalty(b);
+  let h = '<div style="margin-top:14px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream);font-size:0.88rem">';
+  h += '<div style="font-weight:700;margin-bottom:6px">📋 Protokoll</div>';
+  if (p) {
+    h += `<div>${p.legacy ? 'Abfahrt protokolliert' : p.manual ? 'Abfahrt von den Gästen gemeldet' : 'Automatisch abgeschlossen'} am ${fmtDate(p.finalizedAt.slice(0, 10))}</div>`;
+    const undone = bookingUndone(b);
+    h += '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">';
+    h += pen > 0
+      ? `<span class="badge badge-red">Aufschlag: ${pen} € (${p.paid ? 'bezahlt' : 'offen'})</span><span style="font-size:0.8rem;color:var(--text-muted)">${esc(undone.map(t => t.short).join(', '))}</span>`
+      : '<span class="badge badge-green">Kein Aufschlag</span>';
+    h += '</div>';
+    if (p.mowerOrderedAt) h += `<div style="margin-top:6px">🌾 Rasenmäher beauftragt am ${fmtDate(p.mowerOrderedAt.slice(0, 10))}</div>`;
+  } else if (isChecklistBooking(b)) {
+    h += `<div>Wird automatisch am Tag nach der Abreise (${fmtDate(addDaysStr(b.end, 1))}) abgeschlossen – oder sofort mit „Abfahrt melden“.</div>
+      <div style="margin-top:8px"><button type="button" class="btn btn-primary btn-sm" onclick="reportDeparture('${b.id}')">📤 Abfahrt melden</button></div>`;
+  } else {
+    h += '<div style="color:var(--text-muted)">Kein Protokoll vorhanden (Buchung vor Einführung der Checkliste).</div>';
+  }
+  if (mowerDue(b)) {
+    h += `<div class="alert alert-danger" style="margin:10px 0 0"><span>🌾</span><div><strong>Der Rasen wurde nicht gemäht.</strong> Der Rasenmäher wird beauftragt (${MOWER_PRICE} € Aufschlag für diese Buchung).
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button type="button" class="btn btn-primary btn-sm" onclick="mowerMailClick('${b.id}')">✉️ Mail an Rasenmäher vorbereiten</button>
+        <button type="button" class="btn btn-outline btn-sm admin-only" onclick="markMowerOrdered('${b.id}')">✓ Mail ist raus – als beauftragt markieren</button>
+      </div></div></div>`;
+  }
+  return h + '</div>';
+}
+
+function checklistHtml(b) {
+  const st = bookingStatus(b);
+  let html = '';
+  if (st.level !== 'legacy') {
+    const cls = st.level === 'bad' ? 'alert-danger' : st.level === 'warn' ? 'alert-warn' : 'alert-info';
+    const icon = st.level === 'ok' ? '✅' : st.level === 'bad' ? '⛔' : st.level === 'warn' ? '⏳' : '📌';
+    html += `<div class="alert ${cls}" style="margin-bottom:12px"><span>${icon}</span><div>${statusText(b, st)}</div></div>`;
+  }
+  html += REQUIRED_DEP.map(t => taskRowHtml(b, t)).join('');
+  html += protocolBlockHtml(b);
+  return html;
+}
+
+// ---- Aktionen ----
+function rerenderBookingViews() { renderCurrentSection(); renderGlobalAlerts(); }
+
+function toggleBookingTask(bid, tid) {
+  const b = state.bookings.find(x => x.id === bid);
+  const t = REQUIRED_DEP.find(x => x.id === tid);
+  if (!b || !t) return;
+  if (!b.checklist) b.checklist = {};
+  if (t.photo && !b.checklist[tid] && !(b.photos && b.photos[tid])) { alert('Bitte zuerst ein Foto als Nachweis hochladen.'); return; }
+  b.checklist[tid] = !b.checklist[tid];
+  if (tid === 'rasen' && b.checklist[tid]) state.rasenLastMowed = localDateStr();
+  scheduleSave();
+  rerenderBookingViews();
+}
+async function handleBookingPhoto(input, bid, tid) {
+  const file = input.files[0];
+  const b = state.bookings.find(x => x.id === bid);
+  if (!file || !b) return;
+  const data = await compressImage(file);
+  if (!b.photos) b.photos = {};
+  if (!b.checklist) b.checklist = {};
+  b.photos[tid] = data;
+  b.checklist[tid] = true;
+  if (tid === 'rasen') state.rasenLastMowed = localDateStr();
+  await save();
+  rerenderBookingViews();
+}
+function removeBookingPhoto(bid, tid) {
+  const b = state.bookings.find(x => x.id === bid);
+  if (!b) return;
+  if (b.photos) delete b.photos[tid];
+  if (b.checklist) b.checklist[tid] = false;
+  scheduleSave();
+  rerenderBookingViews();
+}
+async function reportDeparture(bid) {
+  const b = state.bookings.find(x => x.id === bid);
+  if (!b || b.protocol) return;
+  if (!confirm('Abfahrt jetzt melden?\n\nNicht erledigte Pflichtaufgaben mit Aufschlag werden dann dem Nutzungsbetrag zugerechnet.')) return;
+  b.protocol = { finalizedAt: nowStamp(), manual: true, paid: false, legacy: false, penalty: 0, undone: [], mowerOrderedAt: null };
+  await save();
+  const pen = bookingPenalty(b);
+  const undone = bookingUndone(b).map(t => t.short).join(', ');
+  alert(`✅ Abfahrt protokolliert für ${hhName(b.householdId)}.\n` + (pen > 0 ? `\n⚠️ Aufschlag: ${pen} €\nNicht erledigt: ${undone}` : '\n🎉 Alle Aufgaben mit Aufschlag erledigt – kein Aufschlag!'));
+  rerenderBookingViews();
+  renderDashboard();
+}
+function togglePanel(id, open) {
+  if (open) openPanels.add(id); else openPanels.delete(id);
+  const box = document.getElementById('bkc-' + id);
+  const b = state.bookings.find(x => x.id === id);
+  if (!box || !b) return;
+  if (open && box.innerHTML.trim()) return;
+  box.innerHTML = open ? checklistHtml(b) : '';
+}
+function openBookingChecklist(id) {
+  depSelectedId = id;
+  showSection('departure');
+}
+
+// Protokoll automatisch anlegen: am Tag nach der Abreise wird jede Buchung abgeschlossen
+function autoFinalize() {
+  const today = localDateStr();
+  let changed = false;
+  state.bookings.forEach(b => {
+    if (isChecklistBooking(b) && !b.protocol && today > b.end) {
+      b.protocol = { finalizedAt: nowStamp(), manual: false, paid: false, legacy: false, penalty: 0, undone: [], mowerOrderedAt: null };
+      changed = true;
+    }
+  });
+  return changed;
+}
+
+// Hinweisleiste oben: Erinnerung, Abreisetag-Alarm, Aufgabe „Rasenmäher beauftragen“
+function renderGlobalAlerts() {
+  const el = document.getElementById('global-alerts');
+  if (!el || !_loaded) return;
+  const now = new Date(), today = localDateStr(now);
+  const items = [];
+  state.bookings.filter(isChecklistBooking).sort((a, b) => a.end.localeCompare(b.end)).forEach(b => {
+    const name = esc(hhName(b.householdId));
+    const st = bookingStatus(b, now);
+    const missing = esc(st.missing.map(id => MISSING_LABEL[id]).join(' und '));
+    const open = `<div><button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="openBookingChecklist('${b.id}')">📋 Checkliste öffnen</button></div>`;
+    if (mowerDue(b)) {
+      items.push(['danger', `🌾 <strong>Aufgabe:</strong> Rasenmäher beauftragen für ${name} (Abreise ${fmtDate(b.end)}) – der Rasen wurde nicht gemäht.${open}`]);
+    } else if (st.missing.length && today === b.end && now < bookingEndAt(b)) {
+      items.push(['danger', `🚨 <strong>Heute ist Abreisetag – ${name}:</strong> Es fehlt noch: ${missing}.${st.missing.includes('rasen') ? ` Wird der Rasen nicht gemäht, wird der Rasenmäher morgen automatisch beauftragt (${MOWER_PRICE} € Aufschlag).` : ''}${open}`]);
+    } else if (st.level === 'warn') {
+      items.push(['warn', `⏳ <strong>Abreise ${name} am ${fmtDate(b.end)}:</strong> Bitte noch erledigen: ${missing}.${open}`]);
+    } else if (st.level === 'bad' && today <= addDaysStr(b.end, 14)) {
+      items.push(['danger', `⛔ <strong>${name} (Abreise ${fmtDate(b.end)}):</strong> Es fehlt noch: ${missing}.${open}`]);
+    }
+  });
+  if (isAdmin && state.requests.length) {
+    const n = state.requests.length;
+    items.unshift(['warn', `📩 <strong>${n} offene Buchungsanfrage${n === 1 ? '' : 'n'}</strong> – im Kalender festlegen oder ablehnen.<div><button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="showSection('calendar')">Zum Kalender</button></div>`]);
+  }
+  el.innerHTML = items.map(([lvl, html]) => `<div class="alert ${lvl === 'danger' ? 'alert-danger' : 'alert-warn'}"><div style="flex:1">${html}</div></div>`).join('');
+}
+
+function tick() {
+  if (!_loaded) return;
+  if (autoFinalize()) scheduleSave();
+  const sig = state.bookings.map(b => b.id + ':' + bookingStatus(b).level + ':' + mowerDue(b)).join('|');
+  if (sig !== _statusSig) {
+    if (_statusSig !== '' && !document.querySelector('.modal-overlay.open')) renderCurrentSection();
+    _statusSig = sig;
+  }
+  renderGlobalAlerts();
+}
+setInterval(tick, 60000);
+
+// ---- Einstellungen: Rasenmäher-Kontakt, Hausadresse ----
+function fillSettingsForm() {
+  const s = state.settings || {};
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v || ''; };
+  set('set-mower-name', s.mowerName);
+  set('set-mower-email', s.mowerEmail);
+  set('set-house-address', s.houseAddress);
+}
+async function saveSettings() {
+  if(!requireAdmin()) return;
+  const name = document.getElementById('set-mower-name').value.trim();
+  const email = document.getElementById('set-mower-email').value.trim();
+  const addr = document.getElementById('set-house-address').value.trim();
+  if (email && !/^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]+$/.test(email)) { alert('Bitte eine gültige E-Mail-Adresse eingeben.'); return; }
+  state.settings = { mowerName: name, mowerEmail: email, houseAddress: addr };
+  await save();
+  alert('Einstellungen gespeichert.');
+}
+
+// ---- Reiter „Abfahrt“ (Checkliste einer Buchung) ----
+function renderDeparture() {
+  const sel = document.getElementById('dep-booking');
+  const now = new Date();
+  const list = state.bookings.filter(isChecklistBooking).sort((a, b) => a.start.localeCompare(b.start));
+  if (!depSelectedId || !state.bookings.some(b => b.id === depSelectedId)) {
+    const cur = list.find(b => bookingStartAt(b) <= now && bookingEndAt(b) > now) || list.find(b => bookingEndAt(b) > now) || list[list.length - 1];
+    depSelectedId = cur ? cur.id : null;
+  }
+  const shown = list.slice();
+  const chosen = state.bookings.find(b => b.id === depSelectedId);
+  if (chosen && !shown.includes(chosen)) shown.unshift(chosen);
+  sel.innerHTML = shown.length
+    ? shown.map(b => `<option value="${b.id}" ${b.id === depSelectedId ? 'selected' : ''}>${esc(hhName(b.householdId))} · ${fmtDate(b.start)} – ${fmtDate(b.end)}</option>`).join('')
+    : '<option value="">Keine Buchung vorhanden</option>';
+  sel.onchange = () => { depSelectedId = sel.value; renderDepChecklist(); };
+  renderDepChecklist();
+}
+function renderDepChecklist() {
+  const el = document.getElementById('dep-checklist');
+  if (!el) return;
+  const b = state.bookings.find(x => x.id === depSelectedId);
+  el.innerHTML = b ? checklistHtml(b) : '<div class="empty" style="padding:16px">Bitte zuerst im Kalender eine Buchung anlegen.</div>';
+}
+
+// ---- Reiter „Protokoll“ (je Buchung, automatisch) ----
+function renderProtocol() {
+  const el = document.getElementById('protocol-list');
+  const items = state.bookings.filter(b => isChecklistBooking(b) || b.protocol).sort((a, b) => b.end.localeCompare(a.end));
+  let html = '';
+  if (items.length === 0 && state.departures.length === 0) {
+    html = '<div class="empty"><span class="empty-icon">📋</span>Noch keine Buchungen mit Protokoll</div>';
+  }
+  html += items.map(b => {
+    const st = bookingStatus(b);
+    const pen = bookingPenalty(b);
+    const isOpen = openPanels.has('p:' + b.id);
+    return `<div class="protocol-item st-${st.level}">
+      <div class="protocol-header" onclick="toggleProtocol('${b.id}')">
+        <div class="protocol-info">
+          <div class="protocol-name">${esc(hhName(b.householdId))}</div>
+          <div class="protocol-date">${fmtDate(b.start)} – ${fmtDate(b.end)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+          ${statusBadgeHtml(st)}
+          ${pen > 0 ? `<span class="badge badge-red">Aufschlag: ${pen} €${b.protocol && b.protocol.paid ? ' (bezahlt)' : ''}</span>` : ''}
+          <span style="color:var(--text-muted)">▼</span>
+        </div>
+      </div>
+      <div class="protocol-body ${isOpen ? 'open' : ''}" id="proto-${b.id}">${isOpen ? checklistHtml(b) : ''}</div>
+    </div>`;
+  }).join('');
+  if (state.departures.length > 0) {
+    html += '<div class="task-section-title" style="margin-top:20px">Frühere Abfahrten ohne passende Buchung</div>';
+    html += [...state.departures].sort((a, b) => b.date.localeCompare(a.date)).map(d => `<div class="protocol-item">
+      <div class="protocol-header" onclick="toggleProtocolLegacy('${d.id}')">
+        <div class="protocol-info">
+          <div class="protocol-name">${esc(hhName(d.householdId))}</div>
+          <div class="protocol-date">Abfahrt: ${fmtDate(d.date)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          ${d.penalty > 0 ? `<span class="badge badge-red">Aufschlag: ${d.penalty} €${d.paid ? ' (bezahlt)' : ''}</span>` : '<span class="badge badge-green">Alles ok</span>'}
+          <button type="button" class="btn btn-danger btn-sm admin-only" onclick="event.stopPropagation();deleteDeparture('${d.id}')">🗑</button>
+          <span style="color:var(--text-muted)">▼</span>
+        </div>
+      </div>
+      <div class="protocol-body" id="protol-${d.id}">
+        ${d.tasks.map(t => `<div class="protocol-task-row"><span class="status-icon">${t.done ? '✅' : '❌'}</span><div style="flex:1"><div>${esc(t.text.split('–')[0].trim())}</div>${t.photo ? `<img src="${safeImg(t.photo)}" alt="Foto" style="margin-top:6px;height:80px;border-radius:8px;border:1px solid var(--border);object-fit:cover;cursor:pointer" onclick="showReceiptFull(this.src)" />` : ''}</div></div>`).join('')}
+      </div>
+    </div>`).join('');
+  }
+  el.innerHTML = html;
+}
+function toggleProtocol(id) {
+  const key = 'p:' + id;
+  const box = document.getElementById('proto-' + id);
+  const b = state.bookings.find(x => x.id === id);
+  if (!box || !b) return;
+  const open = !openPanels.has(key);
+  if (open) openPanels.add(key); else openPanels.delete(key);
+  box.classList.toggle('open', open);
+  box.innerHTML = open ? checklistHtml(b) : '';
+}
+function toggleProtocolLegacy(id) {
+  const box = document.getElementById('protol-' + id);
+  if (box) box.classList.toggle('open');
+}
+async function deleteDeparture(id) {
+  if(!requireAdmin()) return;
+  if (!confirm('Protokolleintrag wirklich löschen?')) return;
+  state.departures = state.departures.filter(d => d.id !== id);
+  await save();
+  renderProtocol();
+  renderDashboard();
+}
+
+// ======================================
+// COSTS
+// ======================================
+function calcTopf() {
+  // Topf = eingegangene Zahlungen (bezahlte Buchungen + bezahlte Aufschläge) minus Ausgaben
+  let total = 0;
+  state.bookings.forEach(b => { if(b.paid) total += bookingCost(b); });
+  penaltyItems().forEach(d => { if(d.paid) total += d.penalty; });
+  state.expenses.forEach(e => { total -= e.amount; });
+  return total;
+}
+
+function bookingCost(b) {
+  const days = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+  // extraPersons = paying persons; exemptPersons = free persons
+  // Support old bookings that used 'persons' and 'exempt'
+  const payingPersons = b.extraPersons !== undefined
+    ? b.extraPersons
+    : Math.max(0, b.persons - (b.exemptPersons?.length || (b.exempt ? b.persons : 0)));
+  return payingPersons * days * 10;
+}
+
+function renderCosts() {
+  let eingegangen = 0, offen = 0, ausgaben = 0;
+
+  state.bookings.forEach(b => {
+    const cost = bookingCost(b);
+    if(cost === 0) return; // fully exempt, skip
+    if(b.paid) eingegangen += cost; else offen += cost;
+  });
+  penaltyItems().forEach(d => {
+    if(d.paid) eingegangen += d.penalty; else offen += d.penalty;
+  });
+  state.expenses.forEach(e => { ausgaben += e.amount; });
+
+  document.getElementById('cost-einnahmen').textContent = eingegangen.toFixed(0) + ' €';
+  document.getElementById('cost-offen').textContent = offen.toFixed(0) + ' €';
+  document.getElementById('cost-ausgaben').textContent = ausgaben.toFixed(0) + ' €';
+
+  // --- PAID bookings ---
+  const paidEl = document.getElementById('costs-paid');
+  const paidBookings = state.bookings.filter(b => b.paid && bookingCost(b) > 0);
+  const exemptBookings = state.bookings.filter(b => bookingCost(b) === 0);
+  const paidDeps = penaltyItems().filter(d => d.paid);
+  if(paidBookings.length === 0 && paidDeps.length === 0) {
+    paidEl.innerHTML = '<div class="empty" style="padding:16px">Noch keine Zahlungen eingegangen</div>';
+  } else {
+    paidEl.innerHTML = [
+      ...paidBookings.map(b => {
+        const hh = state.households.find(h => h.id === b.householdId);
+        const cost = bookingCost(b);
+        const days = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+        return `<div class="cost-row">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${getColor(hh?.color||1)};flex-shrink:0"></span>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem">${esc(hh?.name || '?')}</div>
+              <div style="font-size:0.75rem;color:var(--text-muted)">${fmtDate(b.start)} – ${fmtDate(b.end)} · ${days} Tage · ${b.persons} Pers.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-weight:700;color:var(--green)">+${cost} €</span>
+            <button type="button" class="btn btn-outline btn-sm admin-only" onclick="toggleBookingPaid('${b.id}')" title="Als offen markieren">↩</button>
+          </div>
+        </div>`;
+      }),
+      ...paidDeps.map(d => {
+        const hh = state.households.find(h => h.id === d.householdId);
+        return `<div class="cost-row">
+          <div>
+            <div style="font-weight:600;font-size:0.88rem">${esc(hh?.name || '?')} – Aufschlag</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">${fmtDate(d.date)}: ${esc(d.undone.join(', '))}</div>
+          </div>
+          <span style="font-weight:700;color:var(--green)">+${d.penalty} €</span>
+        </div>`;
+      }),
+      ...exemptBookings.map(b => {
+        const hh = state.households.find(h => h.id === b.householdId);
+        const days = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+        return `<div class="cost-row">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${getColor(hh?.color||1)};flex-shrink:0"></span>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem">${esc(hh?.name || '?')}</div>
+              <div style="font-size:0.75rem;color:var(--text-muted)">${fmtDate(b.start)} – ${fmtDate(b.end)} · ${days} Tage · ${b.persons} Pers.</div>
+            </div>
+          </div>
+          <span style="font-weight:700;background:var(--warm);color:var(--text-muted);padding:3px 10px;border-radius:10px;font-size:0.82rem">🎟 Zahlungsbefreit · 0 €</span>
+        </div>`;
+      })
+    ].join('');
+  }
+
+  // --- UNPAID bookings (Schuldner) ---
+  const unpaidEl = document.getElementById('costs-unpaid');
+  const unpaidBookings = state.bookings.filter(b => !b.paid && bookingCost(b) > 0);
+  const unpaidDeps = penaltyItems().filter(d => !d.paid);
+  if(unpaidBookings.length === 0 && unpaidDeps.length === 0) {
+    unpaidEl.innerHTML = '<div class="alert alert-info" style="margin:0"><span>✅</span> Keine offenen Forderungen</div>';
+  } else {
+    unpaidEl.innerHTML = [
+      ...unpaidBookings.map(b => {
+        const hh = state.households.find(h => h.id === b.householdId);
+        const cost = bookingCost(b);
+        const days = Math.round((new Date(b.end) - new Date(b.start)) / 86400000);
+        // Generate Verwendungszweck
+        const startParts = b.start.split('-');
+        const endDay = b.end.split('-')[2];
+        const verwendungszweck = `${startParts[0]}-${startParts[1]}-${startParts[2]} bis ${endDay} Ostseeabrechnung ${esc(hh?.name || '')}`;
+        return `<div class="cost-row" style="flex-direction:column;align-items:stretch;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${getColor(hh?.color||1)};flex-shrink:0"></span>
+              <div>
+                <div style="font-weight:600;font-size:0.88rem">${esc(hh?.name || '?')}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted)">${fmtDate(b.start)} – ${fmtDate(b.end)} · ${days} Tage · ${b.persons} Pers.</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-weight:700;color:var(--red)">−${cost} € offen</span>
+              <div class="task-checkbox admin-only" onclick="toggleBookingPaid('${b.id}')" title="Als bezahlt markieren" style="width:24px;height:24px;border-radius:6px;flex-shrink:0"></div>
+            </div>
+          </div>
+          <div style="background:#FAEEDA;border-radius:7px;padding:8px 12px;font-size:0.8rem;color:#633806">
+            <span style="font-weight:600">Verwendungszweck: </span>
+            <span style="font-family:monospace">${esc(verwendungszweck)}</span>
+          </div>
+        </div>`;
+      }),
+      ...unpaidDeps.map(d => {
+        const hh = state.households.find(h => h.id === d.householdId);
+        return `<div class="cost-row">
+          <div>
+            <div style="font-weight:600;font-size:0.88rem">${esc(hh?.name || '?')} – Aufschlag</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">${fmtDate(d.date)}: ${esc(d.undone.join(', '))}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-weight:700;color:var(--red)">−${d.penalty} € offen</span>
+            <div class="task-checkbox admin-only" onclick="markPenaltyPaid('${d.id}')" title="Als bezahlt markieren" style="width:24px;height:24px;border-radius:6px;flex-shrink:0"></div>
+          </div>
+        </div>`;
+      })
+    ].join('');
+  }
+
+  // --- Ausgaben log ---
+  const logEl = document.getElementById('costs-log');
+  window._receiptMap = {};
+  const expenses = [...state.expenses].sort((a,b) => new Date(b.date) - new Date(a.date));
+  expenses.forEach((e, i) => { if(e.receipt) window._receiptMap[i] = e.receipt; });
+
+  if(expenses.length === 0) {
+    logEl.innerHTML = '<div class="empty">Noch keine Ausgaben</div>';
+    return;
+  }
+  logEl.innerHTML = `<div class="scrollable"><table>
+    <tr><th>Datum</th><th>Kategorie</th><th>Beschreibung</th><th>Betrag</th><th>Beleg</th><th></th></tr>
+    ${expenses.map((e, i) => `<tr>
+      <td>${fmtDate(e.date)}</td>
+      <td><span class="badge badge-red">${esc(e.cat)}</span></td>
+      <td>${esc(e.desc)}</td>
+      <td class="cost-amount negative">–${e.amount} €</td>
+      <td>${e.receipt
+        ? `<img src="${safeImg(e.receipt)}" style="height:36px;border-radius:4px;border:1px solid var(--border);cursor:pointer;object-fit:cover" onclick="showReceiptFull(${i})" title="Beleg anzeigen" />`
+        : '<span style="color:var(--border);font-size:0.75rem">–</span>'}</td>
+      <td><button type="button" class="btn btn-danger btn-sm admin-only" onclick="deleteExpense('${e.id}')">🗑</button></td>
+    </tr>`).join('')}
+  </table></div>`;
+}
+
+async function deleteExpense(id) {
+  if(!requireAdmin()) return;
+  if(!confirm('Ausgabe wirklich löschen?')) return;
+  state.expenses = state.expenses.filter(e => e.id !== id);
+  await save();
+  renderCosts();
+}
+
+function showReceiptFull(idxOrSrc) {
+  const src = typeof idxOrSrc === 'string' && idxOrSrc.startsWith('data:')
+    ? idxOrSrc
+    : (window._receiptMap && window._receiptMap[idxOrSrc]);
+  if(typeof src !== 'string' || !src.startsWith('data:image/')) return;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px';
+  overlay.innerHTML = `<div style="position:relative;max-width:90vw;max-height:90vh">
+    <img alt="Beleg" style="max-width:100%;max-height:90vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,0.5)" />
+    <button style="position:absolute;top:-14px;right:-14px;background:white;border:none;border-radius:50%;width:32px;height:32px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)">✕</button>
+  </div>`;
+  overlay.querySelector('img').src = src;
+  overlay.onclick = () => document.body.removeChild(overlay);
+  document.body.appendChild(overlay);
+}
+
+function openExpenseModal() {
+  if(!requireAdmin()) return;
+  document.getElementById('exp-desc').value = '';
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-date').value = localDateStr();
+  document.getElementById('exp-receipt-input').value = '';
+  document.getElementById('exp-receipt-preview').style.display = 'none';
+  document.getElementById('exp-receipt-upload-label').style.display = 'inline-flex';
+  window._expReceiptData = null;
+  openModal('modal-expense');
+}
+
+async function handleExpenseReceipt(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const data = await compressImage(file);
+  window._expReceiptData = data;
+  document.getElementById('exp-receipt-img').src = data;
+  document.getElementById('exp-receipt-preview').style.display = 'block';
+  document.getElementById('exp-receipt-upload-label').style.display = 'none';
+}
+
+function removeExpenseReceipt() {
+  window._expReceiptData = null;
+  document.getElementById('exp-receipt-input').value = '';
+  document.getElementById('exp-receipt-preview').style.display = 'none';
+  document.getElementById('exp-receipt-upload-label').style.display = 'inline-flex';
+}
+
+async function saveExpense() {
+  const desc = document.getElementById('exp-desc').value;
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  const date = document.getElementById('exp-date').value;
+  const cat = document.getElementById('exp-cat').value;
+  if(!desc || !amount || !date) { alert('Bitte alle Felder ausfüllen.'); return; }
+  state.expenses.push({ id: Date.now().toString(), desc, amount, date, cat, receipt: window._expReceiptData || null });
+  window._expReceiptData = null;
+  await save();
+  closeModal('modal-expense');
+  renderCosts();
+}
+
+// ======================================
+// SETTINGS
+// ======================================
+function sortedHH() {
+  return [...state.households].sort((a, b) => a.name.localeCompare(b.name, 'de'));
+}
+
+function syncHHSelects() {
+  const opts = '<option value="">– Bitte wählen –</option>' +
+    sortedHH().map(h => `<option value="${h.id}">${esc(h.name)}</option>`).join('');
+  document.querySelectorAll('#dep-household, #book-household').forEach(sel => { if(sel) sel.innerHTML = opts; });
+}
+
+function renderSettings() {
+  fillSettingsForm();
+  const el = document.getElementById('households-list');
+  if(state.households.length === 0) {
+    el.innerHTML = '<div class="empty"><span class="empty-icon">👨‍👩‍👧</span>Noch keine Haushalte angelegt.<br>Klicke oben auf "+ Haushalt hinzufügen".</div>';
+    return;
+  }
+  el.innerHTML = `<div class="scrollable"><table>
+    <tr><th>Farbe</th><th>Name</th><th>Kontakt</th><th>Buchungen</th><th></th></tr>
+    ${sortedHH().map(h => {
+      const cnt = state.bookings.filter(b => b.householdId === h.id).length;
+      return `<tr>
+        <td><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${getColor(h.color)}"></span></td>
+        <td><strong>${esc(h.name)}</strong> ${h.exemptPersons?.length > 0 ? `<span class="badge badge-green" style="font-size:0.7rem">🎟 ${esc(h.exemptPersons.join(', '))}</span>` : ''}</td>
+        <td style="color:var(--text-muted)">${esc(h.contact) || '–'}</td>
+        <td>${cnt}</td>
+        <td style="display:flex;gap:6px" class="admin-only">
+          <button type="button" class="btn btn-outline btn-sm" onclick="editHousehold('${h.id}')">✏️ Bearbeiten</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="deleteHousehold('${h.id}')">🗑 Löschen</button>
+        </td>
+      </tr>`;
+    }).join('')}
+  </table></div>`;
+}
+
+function openHouseholdModal() {
+  if(!requireAdmin()) return;
+  document.getElementById('hh-modal-title').textContent = '👨‍👩‍👧 Haushalt hinzufügen';
+  document.getElementById('hh-edit-id').value = '';
+  document.getElementById('hh-name').value = '';
+  document.getElementById('hh-contact').value = '';
+  document.getElementById('hh-color').value = '1';
+  document.getElementById('hh-exempt1').value = '';
+  document.getElementById('hh-exempt2').value = '';
+  openModal('modal-household');
+}
+
+function editHousehold(id) {
+  if(!requireAdmin()) return;
+  const hh = state.households.find(h => h.id === id);
+  if(!hh) return;
+  document.getElementById('hh-modal-title').textContent = '✏️ Haushalt bearbeiten';
+  document.getElementById('hh-edit-id').value = id;
+  document.getElementById('hh-name').value = hh.name;
+  document.getElementById('hh-contact').value = hh.contact || '';
+  document.getElementById('hh-color').value = hh.color || '1';
+  document.getElementById('hh-exempt1').value = hh.exemptPersons?.[0] || '';
+  document.getElementById('hh-exempt2').value = hh.exemptPersons?.[1] || '';
+  openModal('modal-household');
+}
+
+async function saveHousehold() {
+  const name = document.getElementById('hh-name').value.trim();
+  const contact = document.getElementById('hh-contact').value.trim();
+  const color = parseInt(document.getElementById('hh-color').value);
+  const exempt1 = document.getElementById('hh-exempt1').value.trim();
+  const exempt2 = document.getElementById('hh-exempt2').value.trim();
+  const exemptPersons = [exempt1, exempt2].filter(p => p.length > 0);
+  const editId = document.getElementById('hh-edit-id').value;
+  if(!name) { alert('Bitte einen Namen eingeben.'); return; }
+
+  if(editId) {
+    const hh = state.households.find(h => h.id === editId);
+    if(hh) { hh.name = name; hh.contact = contact; hh.color = color; hh.exemptPersons = exemptPersons; delete hh.exempt; }
+  } else {
+    state.households.push({ id: Date.now().toString(), name, contact, color, exemptPersons });
+  }
+  await save();
+  closeModal('modal-household');
+  renderSettings();
+  syncHHSelects();
+}
+
+async function deleteHousehold(id) {
+  if(!requireAdmin()) return;
+  const hh = state.households.find(h => h.id === id);
+  if(!hh) return;
+  const bookingCount = state.bookings.filter(b => b.householdId === id).length;
+  const msg = bookingCount > 0
+    ? `"${hh.name}" wirklich löschen?\n${bookingCount} Buchung(en) werden ebenfalls gelöscht.`
+    : `"${hh.name}" wirklich löschen?`;
+  if(!window.confirm(msg)) return;
+  state.households = state.households.filter(h => h.id !== id);
+  state.bookings = state.bookings.filter(b => b.householdId !== id);
+  state.departures = state.departures.filter(d => d.householdId !== id);
+  state.requests = state.requests.filter(r => r.householdId !== id);
+  await save();
+  renderSettings();
+  syncHHSelects();
+}
+
+// ======================================
+// HELPERS
+// ======================================
+function fmtDate(str) {
+  if(!str) return '–';
+  const d = new Date(str);
+  return d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+const COLORS = ['','#1D9E75','#6b4c8e','#3a6b8e','#8e5a3a','#8e3a5a','#3a8e7a','#7a8e3a','#8e3a3a'];
+function getColor(i) { return COLORS[i] || COLORS[1]; }
+
+// ======================================
+// NACHFOLGER
+// ======================================
+function renderNachfolger() {
+  const open = (state.nachfolgerNotes || []).filter(n => !n.done);
+  const done = (state.nachfolgerNotes || []).filter(n => n.done);
+
+  const renderNote = (n) => {
+    const hh = state.households.find(h => h.id === n.householdId);
+    return `<div class="booking-item" style="${n.done ? 'opacity:0.6' : ''}">
+      <div class="booking-color" style="background:${getColor(hh?.color||1)};min-height:40px"></div>
+      <div class="booking-info">
+        <div class="booking-name">${esc(n.text)}</div>
+        <div class="booking-dates">Von: ${esc(hh?.name || '?')} · ${fmtDate(n.date)}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${!n.done ? `<button type="button" class="btn btn-primary btn-sm" onclick="markNachfolgerDone('${n.id}')">✓ Erledigt</button>` : '<span class="badge badge-green">Erledigt</span>'}
+        <button type="button" class="btn btn-outline btn-sm" onclick="deleteNachfolger('${n.id}')">🗑</button>
+      </div>
+    </div>`;
+  };
+
+  const openEl = document.getElementById('nachfolger-open');
+  const doneEl = document.getElementById('nachfolger-done');
+
+  openEl.innerHTML = open.length > 0
+    ? open.map(renderNote).join('')
+    : '<div class="empty" style="padding:16px">Keine offenen Hinweise 👍</div>';
+
+  doneEl.innerHTML = done.length > 0
+    ? done.map(renderNote).join('')
+    : '<div style="padding:16px;color:var(--text-muted);font-size:0.85rem">Noch nichts erledigt</div>';
+}
+
+function openNachfolgerModal() {
+  const sel = document.getElementById('nach-household');
+  sel.innerHTML = sortedHH().map(h => `<option value="${h.id}">${esc(h.name)}</option>`).join('');
+  document.getElementById('nach-text').value = '';
+  openModal('modal-nachfolger');
+}
+
+async function saveNachfolger() {
+  const householdId = document.getElementById('nach-household').value;
+  const text = document.getElementById('nach-text').value.trim();
+  if(!text) { alert('Bitte einen Hinweis eingeben.'); return; }
+  if(!state.nachfolgerNotes) state.nachfolgerNotes = [];
+  state.nachfolgerNotes.push({
+    id: Date.now().toString(),
+    householdId,
+    text,
+    date: localDateStr(),
+    done: false
+  });
+  await save();
+  closeModal('modal-nachfolger');
+  renderNachfolger();
+}
+
+async function markNachfolgerDone(id) {
+  const n = (state.nachfolgerNotes || []).find(n => n.id === id);
+  if(n) { n.done = true; await save(); renderNachfolger(); }
+}
+
+async function deleteNachfolger(id) {
+  if(!confirm('Hinweis löschen?')) return;
+  state.nachfolgerNotes = (state.nachfolgerNotes || []).filter(n => n.id !== id);
+  await save();
+  renderNachfolger();
+}
+
+// ======================================
+// ADMIN-ANMELDUNG · MENÜ „MEHR“ · BUCHUNGSANFRAGEN · BUCHUNGSLISTE
+// ======================================
+// Admin = wer das Admin-Passwort kennt. Nur er sieht Buchen, Bearbeiten, Löschen, Bezahlt-Markieren,
+// Ausgaben, Haushaltsverwaltung und das Festlegen von Anfragen. Das ist eine Sperre in der Oberfläche
+// (Prüfsumme statt Klartext-Passwort); alle Haushalte teilen sich technisch dieselben Daten.
+const ADMIN_HASH = '2e9c51ba58ddbf3a1bfe5db0cfe1c7c730648f35c979eb84d75889655188a323';
+let isAdmin = false;
+try { isAdmin = sessionStorage.getItem('ferienhaus_admin') === '1'; } catch (e) {}
+let _pendingRequestId = null;
+
+async function sha256Hex(s) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function applyAdminUi() {
+  document.body.classList.toggle('is-admin', isAdmin);
+  const t = document.getElementById('admin-toggle-btn');
+  if (t) t.textContent = isAdmin ? '🔓 Als Admin abmelden' : '🔑 Admin-Anmeldung';
+  const m = document.getElementById('nav-more');
+  if (m) m.textContent = isAdmin ? 'Mehr ▾ 🔑' : 'Mehr ▾';
+}
+function openAdminLogin() {
+  document.getElementById('admin-pw').value = '';
+  document.getElementById('admin-error').textContent = '';
+  openModal('modal-admin');
+  document.getElementById('admin-pw').focus();
+}
+async function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  const err = document.getElementById('admin-error');
+  if (!pw) { err.textContent = 'Bitte das Admin-Passwort eingeben.'; return; }
+  let ok = false;
+  try { ok = (await sha256Hex('ferienhaus-admin:' + pw)) === ADMIN_HASH; }
+  catch (e) { err.textContent = 'Die Prüfung ist in diesem Browser nicht möglich (bitte die Seite über https öffnen).'; return; }
+  if (!ok) { err.textContent = 'Falsches Passwort.'; document.getElementById('admin-pw').value = ''; return; }
+  isAdmin = true;
+  try { sessionStorage.setItem('ferienhaus_admin', '1'); } catch (e) {}
+  closeModal('modal-admin');
+  applyAdminUi();
+  renderCurrentSection();
+  renderGlobalAlerts();
+}
+function adminLogout() {
+  isAdmin = false;
+  try { sessionStorage.removeItem('ferienhaus_admin'); } catch (e) {}
+  applyAdminUi();
+  renderCurrentSection();
+  renderGlobalAlerts();
+}
+function adminMenuClick() { closeMoreMenu(); if (isAdmin) adminLogout(); else openAdminLogin(); }
+// Schutz für Funktionen, die nur der Admin ausführen darf. Ohne Anmeldung öffnet sich das Passwortfenster.
+function requireAdmin() {
+  if (isAdmin) return true;
+  openAdminLogin();
+  return false;
+}
+
+// ---- Menü „Mehr“ ----
+function toggleMoreMenu(ev) {
+  if (ev) ev.stopPropagation();
+  const m = document.getElementById('more-menu');
+  if (!m.hidden) { closeMoreMenu(); return; }
+  const r = document.getElementById('nav-more').getBoundingClientRect();
+  m.style.top = Math.round(r.bottom + 4) + 'px';
+  m.style.left = Math.max(8, Math.min(Math.round(r.left), window.innerWidth - 232)) + 'px';
+  m.hidden = false;
+}
+function closeMoreMenu() { const m = document.getElementById('more-menu'); if (m) m.hidden = true; }
+document.addEventListener('click', e => { if (!e.target.closest('#more-menu')) closeMoreMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMoreMenu(); });
+
+// ---- Buchungsanfragen ----
+function firstName(id) { const n = hhName(id); return n.split(' ')[0] || '?'; }
+function rangesOverlap(aStart, aEnd, bStart, bEnd) { return aStart < bEnd && aEnd > bStart; }
+
+function openRequestModal() {
+  if (state.households.length === 0) { alert('Bitte zuerst Haushalte unter „Mehr“ → „Haushalte“ anlegen.'); return; }
+  document.getElementById('req-household').innerHTML = sortedHH().map(h => `<option value="${h.id}">${esc(h.name)}</option>`).join('');
+  document.getElementById('req-start').value = '';
+  document.getElementById('req-end').value = '';
+  document.getElementById('req-notes').value = '';
+  openModal('modal-request');
+}
+async function saveRequest() {
+  const householdId = document.getElementById('req-household').value;
+  const start = document.getElementById('req-start').value;
+  const end = document.getElementById('req-end').value;
+  const notes = document.getElementById('req-notes').value.trim();
+  if (!householdId || !start || !end) { alert('Bitte Haushalt, Anreise und Abreise angeben.'); return; }
+  if (end <= start) { alert('Abreise muss nach Anreise sein.'); return; }
+  if (state.requests.some(r => r.householdId === householdId && rangesOverlap(start, end, r.start, r.end))) {
+    alert('Für diesen Haushalt gibt es in diesem Zeitraum schon eine Anfrage.'); return;
+  }
+  const taken = state.bookings.find(b => rangesOverlap(start, end, b.start, b.end));
+  if (taken && !confirm(`Der Zeitraum überschneidet sich mit der festen Buchung von ${hhName(taken.householdId)} (${fmtDate(taken.start)} – ${fmtDate(taken.end)}).\n\nTrotzdem anfragen?`)) return;
+  const notSunday = [start, end].some(d => new Date(d + 'T12:00:00').getDay() !== 0);
+  if (notSunday && !confirm('Wechseltag ist normalerweise Sonntag. Anreise oder Abreise liegt nicht auf einem Sonntag.\n\nTrotzdem anfragen?')) return;
+  state.requests.push({ id: Date.now().toString(), householdId, start, end, notes, createdAt: nowStamp() });
+  await save();
+  closeModal('modal-request');
+  renderCalendar();
+  renderGlobalAlerts();
+  alert('Deine Buchungsanfrage ist eingetragen. Sie erscheint grau im Kalender, bis der Admin sie festlegt.');
+}
+function confirmRequest(id) {
+  if (!requireAdmin()) return;
+  if (!state.requests.some(r => r.id === id)) return;
+  openBookingModal(id);
+}
+async function rejectRequest(id) {
+  if (!requireAdmin()) return;
+  const r = state.requests.find(x => x.id === id);
+  if (!r) return;
+  if (!confirm(`Anfrage von ${hhName(r.householdId)} (${fmtDate(r.start)} – ${fmtDate(r.end)}) wirklich löschen?`)) return;
+  state.requests = state.requests.filter(x => x.id !== id);
+  await save();
+  renderCalendar();
+  renderGlobalAlerts();
+}
+function requestChipsHtml(dateStr) {
+  return state.requests.filter(r => dateStr >= r.start && dateStr <= r.end)
+    .map(r => `<span class="cal-booking-chip cal-req-chip" title="Buchungsanfrage – noch nicht bestätigt">? ${esc(firstName(r.householdId))}</span>`).join('');
+}
+
+// ---- Darstellung: Anfragen und Buchungen ----
+function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000); }
+function kwLabelFor(start, end) {
+  const k1 = getISOWeek(new Date(start)), k2 = getISOWeek(new Date(end));
+  return k1 === k2 ? `KW ${k1}` : `KW ${k1}–${k2}`;
+}
+
+function requestRowHtml(r) {
+  const hh = state.households.find(h => h.id === r.householdId);
+  const rivals = state.requests.filter(o => o.id !== r.id && rangesOverlap(r.start, r.end, o.start, o.end));
+  const taken = state.bookings.find(o => rangesOverlap(r.start, r.end, o.start, o.end));
+  return `<div class="booking-item bk-row bk-req">
+    <div class="booking-color" style="background:#9AA3AD"></div>
+    <div class="bk-main">
+      <div class="bk-top"><span class="bk-name">${esc(hh ? hh.name : 'Unbekannt')}</span><span class="bk-dates">${fmtDate(r.start)} – ${fmtDate(r.end)}</span></div>
+      <div class="bk-sub">${daysBetween(r.start, r.end)} Tage · ${kwLabelFor(r.start, r.end)}${r.notes ? ' · ' + esc(r.notes) : ''}</div>
+      <div class="bk-badges">
+        <span class="badge badge-grey">📩 Anfrage</span>
+        ${rivals.length ? `<span class="badge badge-gold">⚠️ Gleicher Zeitraum: ${esc(rivals.map(o => hhName(o.householdId)).join(', '))}</span>` : ''}
+        ${taken ? `<span class="badge badge-red">⛔ Schon gebucht: ${esc(hhName(taken.householdId))}</span>` : ''}
+      </div>
+    </div>
+    <div class="bk-side admin-only">
+      <button type="button" class="btn btn-primary btn-sm" onclick="confirmRequest('${r.id}')">✓ Festlegen</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="rejectRequest('${r.id}')" title="Anfrage löschen">✕</button>
+    </div>
+  </div>`;
+}
+
+function bookingRowHtml(b) {
+  const hh = state.households.find(h => h.id === b.householdId);
+  const st = bookingStatus(b);
+  const cost = bookingCost(b);
+  const paid = !!b.paid;
+  const exemptCount = b.exemptPersons ? b.exemptPersons.length : 0;
+  const payingPersons = Math.max(0, b.persons - exemptCount);
+  const isOpen = openPanels.has(b.id);
+  const costBadge = cost === 0
+    ? '<span class="bk-cost free">🎟 Alle befreit · 0 €</span>'
+    : `<span class="bk-cost ${paid ? 'paid' : 'open'} adm-click" onclick="toggleBookingPaid('${b.id}')">${paid ? '✓' : '✕'} ${cost} € ${paid ? 'bezahlt' : 'offen'}${exemptCount > 0 ? ` (${payingPersons} zahlend)` : ''}</span>`;
+  return `<div class="booking-item bk-row st-${st.level}">
+    <div class="booking-color" style="background:${getColor(hh ? hh.color : 1)}"></div>
+    <div class="bk-main">
+      <div class="bk-top"><span class="bk-name">${esc(hh ? hh.name : 'Unbekannt')}</span><span class="bk-dates">${fmtDate(b.start)} – ${fmtDate(b.end)}</span></div>
+      <div class="bk-sub">${daysBetween(b.start, b.end)} Tage · ${b.persons} Pers. · ${kwLabelFor(b.start, b.end)}${exemptCount ? ' · 🎟 ' + esc(b.exemptPersons.join(', ')) + ' befreit' : ''}${b.notes ? ' · ' + esc(b.notes) : ''}</div>
+      <div class="bk-badges">${costBadge}${statusBadgeHtml(st)}</div>
+      <details class="bk-panel" ${isOpen ? 'open' : ''} ontoggle="togglePanel('${b.id}', this.open)">
+        <summary>📋 Checkliste &amp; Protokoll</summary>
+        <div class="bk-panel-body" id="bkc-${b.id}">${isOpen ? checklistHtml(b) : ''}</div>
+      </details>
+    </div>
+    <div class="bk-side admin-only">
+      <button type="button" class="btn btn-outline btn-sm" onclick="editBooking('${b.id}')" title="Bearbeiten">✏️</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="deleteBooking('${b.id}')" title="Löschen">🗑</button>
+    </div>
+  </div>`;
+}
+
+function togglePast(open) { if (open) openPanels.add('past'); else openPanels.delete('past'); }
+
+function renderBookingsList() {
+  const today = localDateStr();
+  // Anfragen (nur sichtbar, wenn es welche gibt)
+  const rc = document.getElementById('requests-card');
+  const reqs = state.requests.slice().sort((a, b) => a.start.localeCompare(b.start) || a.createdAt.localeCompare(b.createdAt));
+  if (rc) {
+    rc.style.display = reqs.length ? '' : 'none';
+    document.getElementById('requests-count').textContent = reqs.length;
+    document.getElementById('requests-list').innerHTML = reqs.map(requestRowHtml).join('');
+  }
+  // Buchungen: kommende zuerst, Vergangenes eingeklappt
+  const bl = document.getElementById('bookings-list');
+  if (state.bookings.length === 0) {
+    bl.innerHTML = '<div class="empty"><span class="empty-icon">📋</span>Noch keine Buchungen</div>';
+  } else {
+    const upcoming = state.bookings.filter(b => b.end >= today).sort((a, b) => a.start.localeCompare(b.start));
+    const past = state.bookings.filter(b => b.end < today).sort((a, b) => b.start.localeCompare(a.start));
+    let html = `<div class="bk-group-title">Aktuell &amp; kommend (${upcoming.length})</div>`;
+    html += upcoming.length ? upcoming.map(bookingRowHtml).join('') : '<div class="bk-none">Keine aktuellen oder kommenden Buchungen.</div>';
+    if (past.length) {
+      html += `<details class="bk-past" ${openPanels.has('past') ? 'open' : ''} ontoggle="togglePast(this.open)"><summary>Vergangene Buchungen (${past.length})</summary>${past.map(bookingRowHtml).join('')}</details>`;
+    }
+    bl.innerHTML = html;
+  }
+  // Legende: grauer Eintrag für Anfragen
+  const lg = document.getElementById('cal-legend');
+  if (lg && reqs.length) {
+    lg.style.display = 'flex';
+    lg.insertAdjacentHTML('beforeend', '<div class="cal-legend-item"><div class="cal-legend-dot" style="background:#9AA3AD"></div>Anfrage</div>');
+  }
+}
+
+// ======================================
+// INIT
+// ======================================
+(async () => {
+  applyAdminUi();
+  session = readSession();
+  await loadState();
+  if (typeof autoFinalize === 'function' && _loaded && autoFinalize()) scheduleSave();
+  renderDashboard();
+  renderGlobalAlerts();
+  tick();
+})();
+</script>
+<!-- ===== BUCHUNGSANFRAGE MODAL ===== -->
+<div class="modal-overlay" id="modal-request">
+  <div class="modal">
+    <div class="modal-title">📩 Buchungsanfrage</div>
+    <div class="info-text" style="margin:0 0 14px">Die Anfrage erscheint grau im Kalender. Fest gebucht ist der Zeitraum erst, wenn der Admin ihn bestätigt.</div>
+    <div class="form-group">
+      <label>Haushalt</label>
+      <select id="req-household"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Anreise</label>
+        <input type="date" id="req-start">
+      </div>
+      <div class="form-group">
+        <label>Abreise</label>
+        <input type="date" id="req-end">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notiz (optional)</label>
+      <textarea id="req-notes" maxlength="500" placeholder="z.B. mit 4 Personen, Zeitraum ist flexibel"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-request')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveRequest()">Anfrage senden</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN MODAL ===== -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal">
+    <div class="modal-title">🔑 Admin-Anmeldung</div>
+    <form onsubmit="event.preventDefault();adminLogin()">
+      <div class="form-group">
+        <label for="admin-pw">Admin-Passwort</label>
+        <input type="password" id="admin-pw" autocomplete="off">
+      </div>
+      <div id="admin-error" role="alert" style="color:var(--red);font-size:0.85rem;min-height:1.3em"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-admin')">Abbrechen</button>
+        <button type="submit" class="btn btn-primary">Anmelden</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== NACHFOLGER MODAL ===== -->
+<div class="modal-overlay" id="modal-nachfolger">
+  <div class="modal">
+    <div class="modal-title">📝 Hinweis an den Nachfolger</div>
+    <div class="form-group">
+      <label>Von (Haushalt)</label>
+      <select id="nach-household"></select>
+    </div>
+    <div class="form-group">
+      <label>Hinweis</label>
+      <textarea id="nach-text" placeholder="z.B. Batterien in der Fernbedienung sind leer – bitte besorgen. AA-Größe."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-nachfolger')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveNachfolger()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CUSTOM TASK MODAL ===== -->
+<div class="modal-overlay" id="modal-custom-task">
+  <div class="modal">
+    <div class="modal-title">✏️ Eigene Aufgabe hinzufügen</div>
+    <div class="form-group">
+      <label>Aufgabe</label>
+      <input type="text" id="custom-task-text" placeholder="z.B. Terrassendielen streichen">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-custom-task')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveCustomTask()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EDIT BOOKING MODAL ===== -->
+<div class="modal-overlay" id="modal-edit-booking">
+  <div class="modal">
+    <div class="modal-title">✏️ Buchung bearbeiten</div>
+    <input type="hidden" id="edit-booking-id">
+    <div class="form-group">
+      <label>Haushalt</label>
+      <select id="edit-book-household"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Anreise</label>
+        <input type="date" id="edit-book-start">
+      </div>
+      <div class="form-group">
+        <label>Abreise</label>
+        <input type="date" id="edit-book-end">
+      </div>
+    </div>
+    <div id="edit-exempt-persons" style="display:none;margin-bottom:14px">
+      <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">🎟 Befreite Personen – wer ist dabei?</div>
+      <div id="edit-exempt-checkboxes" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div class="form-group">
+      <label>Weitere zahlende Personen</label>
+      <input type="number" id="edit-extra-persons" min="0" max="20" value="0">
+    </div>
+    <div class="form-group">
+      <label>Notizen</label>
+      <textarea id="edit-book-notes"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit-booking')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveEditBooking()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
